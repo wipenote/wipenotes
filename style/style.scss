@@ -1,4 +1,5 @@
 $purple : #412EA0;
+$brightPurple : #7051FF;
 $grey : #E2DDDD;
 
 @font-face {
@@ -120,7 +121,7 @@ body {
             border: 0;
             border-radius: 10px;
             padding: 14.25px 17.5px;
-            color: #7051ff;
+            color: $brightPurple;
             font-size: 14px;
             line-height: 16px;
             margin-top: 36px;
@@ -155,8 +156,9 @@ body {
             border-radius: 10px;
             padding: 12.25px 17px;
             min-width: 59px;
-            &:first-child {
-              margin-right: 16px;
+            margin-right: 16px;
+            &:last-child {
+              margin-right: 0;
             }
           }
         }
@@ -206,12 +208,60 @@ body {
         }
       }
     }
+    // page qr-code
+    .window__wrapper {
+      padding: 10px 40px;
+      .link-to-message {
+        font-size: 18px;
+        line-height: 22px;
+        color: $brightPurple;
+        border: 0;
+        background-color: transparent;
+        outline: none;
+        display: block;
+        width: fit-content;
+        max-width: 100%;
+        padding: 0;
+        &__img img {
+          width: 24px;
+          margin-right: 18px;
+          margin-top: -2px;
+        }
+      }
+      .qr {
+        display: block;
+        width: 250px;
+        margin-top: 42px;
+        margin-bottom: 44px;
+      }
+    }
+    .form__socials-wrapper {
+      display: flex;
+      // justify-content: space-between;
+      border-top: 1px solid #F7F7F7;
+      padding: 22px 40px 0;
+      // display: flex;
+      .button__socials {
+        display: flex;
+        justify-content: center;
+        background-color: transparent;
+        border: 1px solid $grey;
+        border-radius: 10px;
+        padding: 10px;
+        width: 53px;
+        height: 53px;
+        margin-right: 12px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
   }
   .button__submit {
     font-size: 18px;
     line-height: 22px;
     color: #ffffff;
-    background-color: #7051FF;
+    background-color: $brightPurple;
     border-radius: 10px;
     border: 0;
     padding: 18px 39px;

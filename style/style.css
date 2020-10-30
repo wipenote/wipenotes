@@ -151,7 +151,7 @@ body .window .form__wrapper-img .form__top .form__filename {
   border: 0;
   border-radius: 10px;
   padding: 14.25px 17.5px;
-  color: #7051ff;
+  color: #7051FF;
   font-size: 14px;
   line-height: 16px;
   margin-top: 36px;
@@ -198,10 +198,11 @@ body .window .form__bottom-left .button__attachment {
   border-radius: 10px;
   padding: 12.25px 17px;
   min-width: 59px;
+  margin-right: 16px;
 }
 
-body .window .form__bottom-left .button__attachment:first-child {
-  margin-right: 16px;
+body .window .form__bottom-left .button__attachment:last-child {
+  margin-right: 0;
 }
 
 body .window .form__bottom-right {
@@ -255,6 +256,66 @@ body .window .form__bottom-right .button__password-icon {
 
 body .window .form__bottom-right .button__password-icon img {
   margin-top: -5px;
+}
+
+body .window .window__wrapper {
+  padding: 10px 40px;
+}
+
+body .window .window__wrapper .link-to-message {
+  font-size: 18px;
+  line-height: 22px;
+  color: #7051FF;
+  border: 0;
+  background-color: transparent;
+  outline: none;
+  display: block;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0;
+}
+
+body .window .window__wrapper .link-to-message__img img {
+  width: 24px;
+  margin-right: 18px;
+  margin-top: -2px;
+}
+
+body .window .window__wrapper .qr {
+  display: block;
+  width: 250px;
+  margin-top: 42px;
+  margin-bottom: 44px;
+}
+
+body .window .form__socials-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-top: 1px solid #F7F7F7;
+  padding: 22px 40px 0;
+}
+
+body .window .form__socials-wrapper .button__socials {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: transparent;
+  border: 1px solid #E2DDDD;
+  border-radius: 10px;
+  padding: 10px;
+  width: 53px;
+  height: 53px;
+  margin-right: 12px;
+}
+
+body .window .form__socials-wrapper .button__socials:last-child {
+  margin-right: 0;
 }
 
 body .button__submit {
