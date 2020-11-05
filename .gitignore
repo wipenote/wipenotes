@@ -13,3 +13,4 @@ yarn-error.log*
 .vscode
 .idea
 .env
+server/public/bundles
