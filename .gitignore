@@ -1,0 +1,15 @@
+package-lock.json
+
+node_modules/
+
+.DS_Store
+config/local*.js
+public/bundles/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.vscode
+.idea
+.env
