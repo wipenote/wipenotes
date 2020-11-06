@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import store from '@/store'
 import notFound from './middleware/notFound'
 
 Vue.use(VueRouter)
+
 const routes = [
   {
     path: '/',
@@ -13,7 +13,18 @@ const routes = [
         path: '/',
         name: 'home',
         component: () => import('../views/Home.vue'),
-      }
+      },
+      {
+        path: '/:noteId/note-created',
+        name: 'note-created',
+        component: () => import('../views/NoteCreated.vue'),
+      },
+      {
+        path: '/:noteId',
+        name: 'get-note',
+        component: () => import('../views/Note.vue'),
+      },
+      
     ]
   },
   {

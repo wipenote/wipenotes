@@ -28,6 +28,9 @@ app.use('/assets', express.static(__dirname + '/public'));
 app.get('/', async (req, res) => {
   return res.render('pages/home');
 });
+app.get('/:noteId', async (req, res) => {
+  return res.render('pages/home');
+});
 
 // eslint-disable-next-line no-unused-vars
 app.use(function(err, req, res, next) {
