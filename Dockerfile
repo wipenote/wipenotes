@@ -1,4 +1,4 @@
-FROM node:15.1.0-alpine3.10
+FROM node:14.15.0-alpine3.10
 
 ADD ./package.json /app/
 
