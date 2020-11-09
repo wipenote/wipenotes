@@ -66,7 +66,12 @@
           </div>
           <div class="field__password">
             <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
-            <input class="field__password__input" type="text" v-model="selectedPassword" placeholder="Enter password" />
+            <input
+              class="field__password__input"
+              type="text"
+              v-model="selectedPassword"
+              placeholder="Enter password"
+            />
           </div>
         </div>
       </div>
@@ -173,17 +178,17 @@ export default {
       this.files = this.files.filter(file => file !== targetFile)
     },
     async createNote() {
-        // setCreatedNoteId('1234')
       const {noteId, encodedKey} = await createNote({
         message: this.message,
         files: this.files.map(file => file.file),
         burnDate: this.selectedTTLObjectValue,
+        password: this.selectedPassword,
       })
       console.log('create note', noteId, encodedKey)
       this.$router.push({
         name: 'note-created',
-        params: {noteId: noteId, notePwd: encodedKey},
-        hash: `#${encodedKey}`
+        params: {noteId: noteId, notePwd: this.selectedPassword ? '' : encodedKey},
+        hash: this.selectedPassword ? '' : `#${encodedKey}`
       })
     },
     onClickSelectedTTL() {

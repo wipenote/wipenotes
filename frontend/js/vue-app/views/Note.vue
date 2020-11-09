@@ -6,7 +6,8 @@
         <div class="form__top">
           <div class="textarea__wrapper">
             <textarea
-              v-model="message"
+              v-if="!noteLoading"
+              v-model="currentMessage"
               class="textarea"
               id="textarea"
               name="text"
@@ -14,7 +15,12 @@
               readonly
               autofocus />
 
-            <div>
+            <div v-else>
+              <b-spinner variant="primary"></b-spinner>
+            </div>
+
+
+            <div v-if="isNoteOpened">
               <button
                 v-for="file in files"
                 class="form__filename"
@@ -26,8 +32,23 @@
                 {{file.metadata.name}}
               </button>
             </div>
+
+            <div v-else-if="noteStatusData && noteStatusData.files">
+              <button
+                v-for="filename in fileStatuses"
+                class="form__filename"
+              >
+                <span class="form__filename-icon">
+                  <img src="/assets/images/attachment.svg" alt="attachment">
+                </span>
+                {{filename}}
+              </button>
+            </div>
           </div>
-          <button class="button__open-text">
+          <button
+            class="button__open-text"
+            @click="onClickShowNote"
+          >
             <img src="/assets/images/eye.svg" alt="eye">
           </button>
 
@@ -40,15 +61,37 @@
           </button>
         </div>
         <div class="form__bottom-right">
-          <button class="ttl-selector" @click="onClickSelectedTTL">
+          <button class="ttl-selector" disabled>
             <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
             <span class="ttl-selector-text">Delete immediately</span>
             <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
           </button>
-          <button class="field__password">
+          <form
+            id="field-password-input-wrapper"
+            class="field__password"
+            @submit.prevent="onPasswordEnter"
+          >
             <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
-            <input class="field__password__input" type="text" v-model="selectedPassword" placeholder="Enter password" />
-          </button>
+            <input
+              id="field-password-input"
+              class="field__password__input"
+              type="text"
+              v-model="notePassword"
+              placeholder="Enter password"
+              @focus="onPasswordFieldFocus"
+              @blur="onPasswordFieldBlur"
+              :disabled="isNoteOpened"
+            />
+
+            <b-popover
+              :show.sync="isShowPasswordPopover"
+              target="field-password-input-wrapper"
+              placement="topleft"
+              triggers=""
+            >
+              {{passwordPopoverText}}
+            </b-popover>
+          </form>
         </div>
       </div>
     </div>
@@ -64,8 +107,26 @@
       centered
       :visible="isVisibleConfirmModal"
     >
-      <div class="note-confirm-modal__content">
-        <div class="note-confirm-modal__header">The note will be deleted 10 seconds after reading</div>
+
+      <div
+        v-if="noteStatusLoading"
+        class="note-confirm-modal__content"
+      >
+        <b-spinner variant="primary"></b-spinner>
+      </div>
+
+      <div
+        v-else-if="noteStatusData && noteStatusData.hasBurned"
+        class="note-confirm-modal__content"
+      >
+        <div class="note-confirm-modal__header">The note is not exist or has been deleted</div>
+      </div>
+
+      <div
+        v-else
+        class="note-confirm-modal__content"
+      >
+        <div class="note-confirm-modal__header">The note will be deleted reading</div>
         <div class="note-confirm-modal__actions">
           <button
             class="note-confirm-modal__button note-confirm-modal__read-button button__submit"
@@ -81,6 +142,7 @@
           </button>
         </div>
       </div>
+
     </b-modal>
   </div>
 </template>
@@ -101,13 +163,19 @@
         message: '',
         files: [],
         noteId: '',
-        notePwd: '',
         noteHash: '',
-        noteLoading: '',
-        noteData: {},
-        selectedPassword: '',
+        noteLoading: false,
+        noteData: null,
+        noteError: null,
+        noteStatusData: null,
+        noteStatusError: null,
+        noteStatusLoading: true,
+        notePassword: '',
         selectedTTL: '',
         isVisibleConfirmModal: true,
+        isNoteOpened: false,
+        isShowPasswordPopover: false,
+        passwordPopoverText: '',
       }
     },
     mounted() {
@@ -115,14 +183,41 @@
 
       this.noteId = this.$route.params.noteId
       this.noteHash = this.$route.hash ? this.$route.hash.replace('#', '') : ''
-      this.notePwd = this.$route.params.notePwd
+      this.loadNoteStatus()
     },
     computed: {
-      linkUrl() {
-        return this.noteId ? `${window.location.origin}/${this.noteId}#${this.notePwd || ''}` : ''
+      currentMessage() {
+        const statusData = this.noteStatusData
+
+        if (this.isNoteOpened) {
+          return this.message
+        }
+
+        if (!this.noteStatusData || !this.noteStatusData.messageLength) {
+          return ''
+        }
+
+        return new Array(this.noteStatusData.messageLength).fill('*').join('')
+      },
+      fileStatuses() {
+        return this.noteStatusData && this.noteStatusData.files ?
+          new Array(this.noteStatusData.files).fill('***********')
+          : []
       }
     },
     methods: {
+      onPasswordFieldFocus() {
+        this.closeShowPasswordPopover()
+      },
+      onPasswordFieldBlur() {
+
+      },
+      onClickShowNote() {
+        this.showNote()
+      },
+      hideConfirmModal() {
+        this.isVisibleConfirmModal = false
+      },
       handleFilesUpload(){
         console.log('this.$refs.files.files', this.$refs.files.files)
         this.files = this.$refs.files.files;
@@ -146,35 +241,38 @@
 
         return contentPromise
       },
-      onClickAddAttachment() {
-        this.$refs.files.click()
-      },
-      getNote() {
-        // setCreatedNoteId('1234')
-        const note = createNote({
-          message: this.message,
-          files: this.files.map(file => file.file),
-          burnDate: this.selectedTTL,
-        })
-      },
-      onClickSelectedTTL() {
-        this.$refs.selectTTL.click()
-      },
       createNewNote() {
         this.$router.push({name: 'home'})
       },
-      async onReadNow() {
-        this.$refs.confirmModal.hide()
-        await this.loadNote()
+      async loadNoteStatus() {
+        this.noteStatusLoading = true
+
+        try {
+          console.log('getNoteStatus', this.noteId)
+          const status = await getNoteStatus({id: this.noteId})
+          console.log('getNoteStatus', status)
+          this.noteStatusData = status
+        } catch (e) {
+          console.error(e)
+          this.noteStatusError = e.message
+        }
+
+        this.noteStatusLoading = false
 
       },
       async loadNote() {
         this.noteLoading = true
 
         try {
-          const urlencodedKey = this.noteHash
-          const key = await secrets.urldecodeKey(urlencodedKey)
-          console.log('urlencodedKey', urlencodedKey)
+          const hash = this.noteHash
+          let key
+          if (hash) {
+            key = await secrets.urldecodeKey(hash)
+          } else {
+            key = await secrets.createKeyFromPassword(this.notePassword)
+          }
+
+          console.log('urlencodedKey', hash)
           console.log('key', key)
           const data = await getNote({id: this.noteId, key })
           console.log('getnote', data)
@@ -182,14 +280,37 @@
           this.message = data.message
           this.files = data.files
         } catch (e) {
-          console.error(e)
+          this.noteLoading = false
+          console.error(e.message)
+          this.showPasswordPopover(e.message)
+          throw e
         }
 
         this.noteLoading = false
+      },
+      showPasswordPopover(text) {
+        if (text) {
+          this.passwordPopoverText = text
+        }
+        this.isShowPasswordPopover = true
+      },
+      closeShowPasswordPopover() {
+        this.isShowPasswordPopover = false
+        this.passwordPopoverText = ''
+      },
+      async onReadNow() {
+        this.$refs.confirmModal.hide()
+        if (this.noteHash) {
+          await this.loadNote()
+          this.isNoteOpened = true
+        } else {
+          this.showPasswordPopover('Please, enter password')
+        }
 
       },
       onReadLater() {
-        this.$router.push({name: 'home'})
+        // this.$router.push({name: 'home'})
+        this.hideConfirmModal()
       },
       downloadFile(file) {
         var blob = new Blob([file.data], file.metadata);
@@ -200,6 +321,17 @@
         link.href = window.URL.createObjectURL(blob);
         link.download = file.metadata.name
         link.click();
+      },
+      async showNote() {
+        if (this.isNoteOpened) {
+          return
+        }
+        this.closeShowPasswordPopover()
+        await this.loadNote()
+        this.isNoteOpened = true
+      },
+      async onPasswordEnter() {
+        await this.showNote()
       }
     }
   }

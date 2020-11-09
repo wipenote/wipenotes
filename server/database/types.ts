@@ -16,6 +16,7 @@ export interface Note {
         data: number[]
         IV: number[]
     }
+    messageLength: number
     files: Array<{
         data: number[]
         IV: number[]

@@ -1,11 +1,50 @@
 import * as hex from './hex'
 
 const KEYSTYLE = 'raw'
-const ENCRYPT_PARAMS = {
+export const ENCRYPT_PARAMS = {
   name: 'AES-GCM',
   length: 256,
 }
-const FINGERPRINT_MODE = 'SHA-512'
+export const FINGERPRINT_MODE = 'SHA-512'
+
+const pwdSalt = new Uint8Array([141, 223, 161, 6, 64, 2, 170, 90]);
+
+export const createKeyFromPassword = async (pwd = '') => {
+  var encoder = new TextEncoder('utf-8');
+  var passphraseKey = encoder.encode(pwd);
+  
+  // You should firstly import your passphrase Uint8array into a CryptoKey
+  const key = await window.crypto.subtle.importKey(
+    'raw',
+    passphraseKey,
+    {name: 'PBKDF2'},
+    false,
+    ['deriveBits', 'deriveKey']
+  )
+  
+  return window.crypto.subtle.deriveKey(
+    { "name": 'PBKDF2',
+      "salt": pwdSalt,
+      // don't get too ambitious, or at least remember
+      // that low-power phones will access your app
+      "iterations": 10,
+      "hash": FINGERPRINT_MODE
+    },
+    key,
+    
+    // Note: for this demo we don't actually need a cipher suite,
+    // but the api requires that it must be specified.
+    // For AES the length required to be 128 or 256 bits (not bytes)
+    ENCRYPT_PARAMS,
+    
+    // Whether or not the key is extractable (less secure) or not (more secure)
+    // when false, the key can only be passed as a web crypto object, not inspected
+    true,
+    
+    // this web crypto object will only be allowed for these functions
+    [ "encrypt", "decrypt" ]
+  )
+}
 
 const sameArray = (array1, array2) => {
   return (

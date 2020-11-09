@@ -1,8 +1,8 @@
 import uuid from 'uuid'
-import Redis, { RedisOptions } from 'ioredis'
-import { logger } from '../logger'
+import Redis, {RedisOptions} from 'ioredis'
+import {logger} from '../logger'
 
-import { NoteId, LogId, Note, NoteOptions, Log, Database } from './types'
+import {NoteId, LogId, Note, NoteOptions, Log, Database} from './types'
 import _ from 'lodash'
 
 /**
@@ -15,114 +15,134 @@ import _ from 'lodash'
  * `startDatabase()` will fix that for you.
  */
 export class RedisDatabase implements Database {
-    private redis: Redis.Redis
+  private redis: Redis.Redis
 
-    constructor(options?: RedisOptions) {
-        this.redis = new Redis(options)
+  constructor(options?: RedisOptions) {
+    this.redis = new Redis(options)
+  }
+
+  async startDatabase() {
+    if (!_.includes(['connecting', 'connected'], this.redis.status)) {
+      logger.info(`Connecting to redis`)
+      await this.redis.connect()
+    }
+  }
+
+  async storeNote(note: Note) {
+    const id = uuid.v4() as NoteId
+    const jsonified = JSON.stringify(note)
+    logger.debug(`Storing note ${id} in Redis under note-${id}`)
+    if (note.burnDate) {
+      await this.redis.set(`note-${id}`, jsonified, 'EX', note.burnDate)
+      await this.redis.set(`read-${id}`, '[]', 'EX', note.burnDate)
+    } else {
+      await this.redis.set(`note-${id}`, jsonified)
+      await this.redis.set(`read-${id}`, '[]')
+    }
+    return id
+  }
+
+  async storeLog(entry: Log) {
+    const id = uuid.v4() as LogId
+    const jsonified = JSON.stringify(entry)
+    logger.debug(`Storing log ${id} in Redis under log-${id}`)
+    await this.redis.set(`log-${id}`, jsonified)
+    return id
+  }
+
+  async getNoteStatus(noteId: NoteId) {
+    const keyValue = await this.redis.get(`note-${noteId}`)
+
+    const note = JSON.parse(keyValue || '')
+
+    if (!note) {
+      return {
+        hasBurned: true,
+      }
+    }
+    console.log('getNote', note)
+    const currentTime = Date.now()
+
+    return {
+      hasBurned: false,
+      files: note.files.length,
+      messageLength: note.messageLength,
+    }
+  }
+
+  async getNote(noteId: NoteId, options: NoteOptions) {
+
+    const doesExist = await this.redis.exists(`note-${noteId}`)
+    if (!doesExist) {
+      throw new Error(`Note with Id "${noteId}" does not exist.`)
     }
 
-    async startDatabase() {
-        if (!_.includes(['connecting', 'connected'], this.redis.status)) {
-            logger.info(`Connecting to redis`)
-            await this.redis.connect()
-        }
+    const keyValue = await this.redis.get(`note-${noteId}`)
+    if (!keyValue) {
+      throw new Error('Note does not exist')
     }
 
-    async storeNote(note: Note) {
-        const id = uuid.v4() as NoteId
-        const jsonified = JSON.stringify(note)
-        logger.debug(`Storing note ${id} in Redis under note-${id}`)
-        if (note.burnDate) {
-            await this.redis.set(`note-${id}`, jsonified, 'EX', note.burnDate)
-            await this.redis.set(`read-${id}`, '[]', 'EX', note.burnDate)
-        } else {
-            await this.redis.set(`note-${id}`, jsonified)
-            await this.redis.set(`read-${id}`, '[]')
-        }
-        return id
+    const note = JSON.parse(keyValue || '')
+
+    console.log('getNote', note)
+    const currentTime = Date.now()
+    if (note.burnDate && currentTime >= note.burnDate) {
+      const A = new Date(note.burnDate)
+      const B = new Date(currentTime)
+      throw new Error(
+        `Note with id "${noteId}" allows only access before ${A} ` +
+        `but currently it is ${B}`
+      )
+    } else {
+      // await this.redis.del(`note-${noteId}`)
     }
 
-    async storeLog(entry: Log) {
-        const id = uuid.v4() as LogId
-        const jsonified = JSON.stringify(entry)
-        logger.debug(`Storing log ${id} in Redis under log-${id}`)
-        await this.redis.set(`log-${id}`, jsonified)
-        return id
+    return note
+  }
+
+  async getLog(logId: LogId) {
+    const key = `log-${logId}`
+    const doesExist = await this.redis.exists(key as string)
+    if (!doesExist) {
+      throw new Error(`Log with Id "${logId}" does not exist.`)
     }
 
-    async getNote(noteId: NoteId, options: NoteOptions) {
+    const jsonified = (await this.redis.get(key)) || ''
+    logger.debug(`Log ${logId} was read`)
+    return JSON.parse(jsonified)
+  }
 
-        const doesExist = await this.redis.exists(`note-${noteId}`)
-        if (!doesExist) {
-            throw new Error(`Note with Id "${noteId}" does not exist.`)
-        }
+  async noteExists(noteId: NoteId) {
+    return !!(await this.redis.exists(`note-${noteId}`))
+  }
 
-        const keyValue = await this.redis.get(`note-${noteId}`)
-        if (!keyValue) {
-            throw new Error('Note does not exist')
-        }
-
-        const note = JSON.parse(keyValue || '')
-
-        console.log('getNote', note)
-        const currentTime = Date.now()
-        if (note.burnDate && currentTime >= note.burnDate) {
-            const A = new Date(note.burnDate)
-            const B = new Date(currentTime)
-            throw new Error(
-                `Note with id "${noteId}" allows only access before ${A} ` +
-                    `but currently it is ${B}`
-            )
-        } else {
-            // await this.redis.del(`note-${noteId}`)
-        }
-
-        return note
+  async hasBurned(noteId: NoteId) {
+    const noteExists = await this.redis.exists(`note-${noteId}`)
+    if (!noteExists) {
+      throw new Error(
+        `Note with id "${noteId}" does not exist. Cannot check if burnt.`
+      )
     }
 
-    async getLog(logId: LogId) {
-        const key = `log-${logId}`
-        const doesExist = await this.redis.exists(key as string)
-        if (!doesExist) {
-            throw new Error(`Log with Id "${logId}" does not exist.`)
-        }
+    const note = JSON.parse((await this.redis.get(`note-${noteId}`)) || '')
+    return note.burnDate < Date.now()
+  }
 
-        const jsonified = (await this.redis.get(key)) || ''
-        logger.debug(`Log ${logId} was read`)
-        return JSON.parse(jsonified)
+  async hasBeenRead(noteId: NoteId) {
+    const noteExists = await this.redis.exists(`note-${noteId}`)
+    if (!noteExists) {
+      throw new Error(
+        `Note with id "${noteId}" does not exist. Cannot check read count.`
+      )
     }
 
-    async noteExists(noteId: NoteId) {
-        return !!(await this.redis.exists(`note-${noteId}`))
-    }
+    const note = JSON.parse((await this.redis.get(`note-${noteId}`)) || '')
+    const reads = JSON.parse((await this.redis.get(`read-${noteId}`)) || '')
+    return reads.length >= note.allowedReads
+  }
 
-    async hasBurned(noteId: NoteId) {
-        const noteExists = await this.redis.exists(`note-${noteId}`)
-        if (!noteExists) {
-            throw new Error(
-                `Note with id "${noteId}" does not exist. Cannot check if burnt.`
-            )
-        }
-
-        const note = JSON.parse((await this.redis.get(`note-${noteId}`)) || '')
-        return note.burnDate < Date.now()
-    }
-
-    async hasBeenRead(noteId: NoteId) {
-        const noteExists = await this.redis.exists(`note-${noteId}`)
-        if (!noteExists) {
-            throw new Error(
-                `Note with id "${noteId}" does not exist. Cannot check read count.`
-            )
-        }
-
-        const note = JSON.parse((await this.redis.get(`note-${noteId}`)) || '')
-        const reads = JSON.parse((await this.redis.get(`read-${noteId}`)) || '')
-        return reads.length >= note.allowedReads
-    }
-
-    async stopDatabase() {
-        logger.info(`Disconnecting from redis`)
-        await this.redis.quit()
-    }
+  async stopDatabase() {
+    logger.info(`Disconnecting from redis`)
+    await this.redis.quit()
+  }
 }

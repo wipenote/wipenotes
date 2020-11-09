@@ -4,8 +4,7 @@ import {urlencodeKey} from "./secrets";
 
 const apiPost = (path, body) => {
   // const url = `${window.location.origin}${path}`
-  const url = `http://localhost:3000${path}`
-  return fetch(url, {
+  return fetch(path, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -15,19 +14,18 @@ const apiPost = (path, body) => {
 }
 
 const apiGet = (path) => {
-  const url = `http://localhost:3000${path}`
-  return fetch(url, {
+  return fetch(path, {
     method: 'GET',
   })
 }
 
-
 const createNote = async ({
   message,
+  password,
   files,
-  burnDate
+  burnDate,
   }) => {
-  const key = await secrets.generateKey()
+  const key = password ? await secrets.createKeyFromPassword(password): await secrets.generateKey()
   console.log('key', key)
   const note = {
     encryptedMessage: await secrets.encryptMessage(message, key),
@@ -61,11 +59,15 @@ const getNote = async ({id, key}) => {
   note.encryptedMessage.data = new Uint8Array(note.encryptedMessage.data).buffer
   note.encryptedMessage.IV = new Uint8Array(note.encryptedMessage.IV)
   
-  
-  const decryptedMessage = await secrets.decryptMessage(key, {
-    encryptedMessage: note.encryptedMessage.data,
-    IV: note.encryptedMessage.IV,
-  })
+  let decryptedMessage = ''
+  try {
+    decryptedMessage = await secrets.decryptMessage(key, {
+      encryptedMessage: note.encryptedMessage.data,
+      IV: note.encryptedMessage.IV,
+    })
+  } catch (e) {
+    throw new Error('Password is invalid. Please, try again')
+  }
   
   const files = []
   
@@ -100,7 +102,7 @@ const getNote = async ({id, key}) => {
   }
 }
 
-const getNoteStatus = async (id) => {
+const getNoteStatus = async ({id}) => {
   const response = await apiGet(`/api/note/${id}/status`)
   if (!response.ok) {
     if (response.status === 404) {
@@ -113,16 +115,7 @@ const getNoteStatus = async (id) => {
     }
     throw new Error(`Getting status for ${id} did not work!`)
   }
-  const status = await response.json()
-  
-  const { hasBurned, hasBeenRead } = status
-  
-  console.log(`Status for note ${id} is:`, status)
-  return {
-    exists: true,
-    hasBurned,
-    hasBeenRead,
-  }
+  return await response.json()
 }
 
 export {
