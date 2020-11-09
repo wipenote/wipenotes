@@ -31,6 +31,7 @@ const createNote = async ({
   console.log('key', key)
   const note = {
     encryptedMessage: await secrets.encryptMessage(message, key),
+    messageLength: message.length,
     files: await Promise.all(
       files.map(file => secrets.encryptFile(file, key))
     ),

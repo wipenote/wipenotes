@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run serve && npm run serve",
-    "serve": "NODE_ENV=development nodemon server/index.ts",
-    "serve:client": "webpack --config=./webpack.config.dev.js"
+    "start-backend-prod": "NODE_ENV=production ts-node server/index.ts",
+    "start-backend-dev": "NODE_ENV=development nodemon server/index.ts",
+    "build-assets-prod": "webpack --config=./webpack.config.js",
+    "build-assets-dev": "webpack --config=./webpack.config.dev.js"
   },
   "repository": {
     "type": "git",

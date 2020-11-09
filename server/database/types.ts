@@ -21,6 +21,7 @@ export interface Note {
         IV: number[]
     }>
     burnDate: number
+    burnDateValue: string
     encryptionScheme?: any
 }
 

@@ -1,0 +1,26 @@
+stages:
+  - build
+
+build:app:build:
+  stage: build
+  variables:
+    APP: wipenote
+  tags:
+    - runner-01
+  script:
+    - docker build -t registry.kryptonhub.com/wipenote/wipenote:latest .
+    - docker push registry.kryptonhub.com/wipenote/wipenote:latest
+  only:
+    - master
+
+build:app:build-dev:
+  stage: build
+  tags:
+    - runner-01
+  variables:
+    APP: wipenote
+  script:
+    - docker build -t registry.kryptonhub.com/wipenote/wipenote:dev .
+    - docker push registry.kryptonhub.com/wipenote/wipenote:dev
+  only:
+    - develop

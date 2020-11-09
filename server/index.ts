@@ -257,6 +257,7 @@ const main = async () => {
                 const note: database.Note = {
                     encryptedMessage,
                     burnDate: getBurnDateFromLabel(burnDate),
+                    burnDateValue: burnDate,
                     encryptionScheme,
                     files,
                 }
