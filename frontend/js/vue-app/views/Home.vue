@@ -109,7 +109,11 @@ export default {
     selectedTTLObjectLabel() {
       const selectedTTLObject = this.ttlList[this.selectedTTLIndex]
       return selectedTTLObject ? selectedTTLObject.label: ''
-    }
+    },
+    selectedTTLObjectValue() {
+      const selectedTTLObject = this.ttlList[this.selectedTTLIndex]
+      return selectedTTLObject ? selectedTTLObject.value: ''
+    },
   },
   methods: {
     onClickTTLObject(index) {
@@ -173,7 +177,7 @@ export default {
       const {noteId, encodedKey} = await createNote({
         message: this.message,
         files: this.files.map(file => file.file),
-        burnDate: this.selectedTTL,
+        burnDate: this.selectedTTLObjectValue,
       })
       console.log('create note', noteId, encodedKey)
       this.$router.push({
