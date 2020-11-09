@@ -93,7 +93,6 @@ export default {
       isNoteVisible: true,
       postFormData: new FormData(),
       ttlList: [
-        { value: '30_sec', label: '30 sec'},
         { value: 'immediately', label: 'Delete immediately'},
         { value: '15_min', label: '15 minutes'},
         { value: '30_min', label: '30 minutes'},
