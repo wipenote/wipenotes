@@ -24,7 +24,7 @@
               </button>
             </div>
           </div>
-          <button class="button__open-text">
+          <button @click="toggleNoteVisibility" class="button__open-text">
             <img src="/assets/images/eye.svg" alt="eye">
           </button>
 
@@ -38,27 +38,36 @@
           >
             <img src="/assets/images/attachment.svg" alt="attachment">
           </button>
-          <button class="button__attachment"><img src="/assets/images/picture.svg" alt="attach a photo"></button>
         </div>
         <div class="form__bottom-right">
-          <select style="display: none" v-model="selectedTTL" ref="selectTTL">
-            <option value="immediately">Delete immediately</option>
-            <option value="30_sec">30_sec</option>
-            <option value="15_min">15 min</option>
-            <option value="30_min">30 min</option>
-            <option value="1_hour">1 hour</option>
-            <option value="3_hours">3 hours</option>
-            <option value="24_hours">24 hours</option>
-          </select>
-          <button class="button__timer" @click="onClickSelectedTTL">
-            <span class="button__timer-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
-            <span class="button__timer-text">Delete immediately</span>
-            <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
-          </button>
-          <button class="field__password">
+          <div
+            class="ttl-selector"
+            :class="{ open: isTTLSelectorOpen }"
+            tabindex="0"
+            @click="isTTLSelectorOpen = !isTTLSelectorOpen"
+            @blur="isTTLSelectorOpen = false"
+          >
+            <div class="ttl-selector-current">
+              <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
+              <span class="ttl-selector-text">
+                {{selectedTTLObjectLabel}}
+              </span>
+              <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
+            </div>
+            <ul class="ttl-selector__list">
+              <li
+                v-for="(ttlObject, index) in ttlList"
+                @click="onClickTTLObject(index)"
+                class="ttl-selector__list-item"
+              >
+                <span class="ttl-selector-text">{{ttlObject.label}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="field__password">
             <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
             <input class="field__password__input" type="text" v-model="selectedPassword" placeholder="Enter password" />
-          </button>
+          </div>
         </div>
       </div>
     </div>
@@ -81,33 +90,38 @@ export default {
     return {
       message: '',
       files: [],
+      isNoteVisible: true,
       postFormData: new FormData(),
-      selectedTTL: 'immediately',
-      selectedPassword: ''
+      ttlList: [
+        { value: '30_sec', label: '30 sec'},
+        { value: 'immediately', label: 'Delete immediately'},
+        { value: '15_min', label: '15 minutes'},
+        { value: '30_min', label: '30 minutes'},
+        { value: '1_hour', label: '1 hour'},
+        { value: '3_hours', label: '3 hours'},
+        { value: '24_hours', label: '24 hours'}
+      ],
+      selectedTTLIndex: 0,
+      selectedPassword: '',
+      isTTLSelectorOpen: false,
+    }
+  },
+  computed: {
+    selectedTTLObjectLabel() {
+      const selectedTTLObject = this.ttlList[this.selectedTTLIndex]
+      return selectedTTLObject ? selectedTTLObject.label: ''
     }
   },
   methods: {
+    onClickTTLObject(index) {
+      this.selectedTTLIndex = index
+    },
     submitFiles(){
       let formData = new FormData();
       for( var i = 0; i < this.files.length; i++ ){
         let file = this.files[i];
         formData.append('files[' + i + ']', file);
       }
-      /*
-      axios.post( '/multiple-files',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      ).then(function(){
-        console.log('SUCCESS!!');
-      })
-        .catch(function(){
-          console.log('FAILURE!!');
-        });
-        */
     },
     handleFilesUpload(){
       console.log('this.$refs.files.files', this.$refs.files.files)
@@ -149,6 +163,7 @@ export default {
       console.log('this.postFormData', this.postFormData)
     },
     onClickAddAttachment() {
+      this.$refs.files.value = ''
       this.$refs.files.click()
     },
     deleteAttachment(targetFile) {
@@ -164,12 +179,16 @@ export default {
       console.log('create note', noteId, encodedKey)
       this.$router.push({
         name: 'note-created',
-        params: {noteId: noteId, notePwd: encodedKey}
+        params: {noteId: noteId, notePwd: encodedKey},
+        hash: `#${encodedKey}`
       })
     },
     onClickSelectedTTL() {
       this.$refs.selectTTL.click()
     },
+    toggleNoteVisibility() {
+      this.isNoteVisible = !this.isNoteVisible
+    }
   }
 }
 </script>

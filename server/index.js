@@ -32,6 +32,8 @@ app.get('/:noteId', async (req, res) => {
   return res.render('pages/home');
 });
 
+app.use(routes)
+
 // eslint-disable-next-line no-unused-vars
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;

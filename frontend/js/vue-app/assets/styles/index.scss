@@ -418,7 +418,7 @@ body {
               margin-left: auto;
             }
           }
-          .button__timer {
+          .ttl-selector {
             background-color: transparent;
             border: 1px solid $grey;
             border-radius: 10px;
@@ -480,6 +480,8 @@ body {
         width: fit-content;
         max-width: 100%;
         padding: 0;
+        margin-bottom: 42px;
+
         @media (min-width: 576px) and (max-width: 991px) {
           overflow: hidden;
           text-overflow: ellipsis;

@@ -35,27 +35,14 @@
       </div>
       <div class="form__bottom">
         <div class="form__bottom-left">
-          <button
-            class="button__attachment"
-            @click="onClickAddAttachment"
-          >
+          <button class="button__attachment">
             <img src="/assets/images/attachment.svg" alt="attachment">
           </button>
-          <button class="button__attachment"><img src="/assets/images/picture.svg" alt="attach a photo"></button>
         </div>
         <div class="form__bottom-right">
-          <select style="display: none" v-model="selectedTTL" ref="selectTTL">
-            <option value="immediately">Delete immediately</option>
-            <option value="30_sec">30_sec</option>
-            <option value="15_min">15 min</option>
-            <option value="30_min">30 min</option>
-            <option value="1_hour">1 hour</option>
-            <option value="3_hours">3 hours</option>
-            <option value="24_hours">24 hours</option>
-          </select>
-          <button class="button__timer" @click="onClickSelectedTTL">
-            <span class="button__timer-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
-            <span class="button__timer-text">Delete immediately</span>
+          <button class="ttl-selector" @click="onClickSelectedTTL">
+            <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
+            <span class="ttl-selector-text">Delete immediately</span>
             <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
           </button>
           <button class="field__password">

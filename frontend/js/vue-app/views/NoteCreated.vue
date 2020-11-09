@@ -3,7 +3,10 @@
     <div class="window">
       <div class="window__wrapper">
         <div class="link-to-message">
-          <span class="link-to-message__img">
+          <span
+            class="link-to-message__copy"
+            @click="copyLink"
+          >
             <img src="/assets/images/copy.svg" alt="copy">
           </span>
           <router-link :to="{ path: relativeLinkUrl }">
@@ -11,7 +14,13 @@
           </router-link>
 
         </div>
-        <img class="qr" src="/assets/images/qr.png" alt="qr code">
+        <qrcode-vue
+          v-if="linkUrl"
+          :value="linkUrl"
+          :size="250"
+          level="H"
+        />
+
       </div>
       <div class="form__socials-wrapper">
         <a class="button__socials" href="#">
@@ -39,10 +48,13 @@
     getNote,
     getNoteStatus,
   } from '../utils'
+  import QrcodeVue from 'qrcode.vue'
 
   export default {
     name: 'Home',
-    props: {},
+    components: {
+      QrcodeVue,
+    },
     data() {
       return {
         message: '',
@@ -51,10 +63,11 @@
         notePwd: ''
       }
     },
-    created() {
+    mounted() {
       console.log('router', this.$router, this.$route)
       this.noteId = this.$route.params.noteId
-      this.notePwd = this.$route.params.notePwd
+      this.notePwd = this.$route.params.notePwd || this.$route.hash.replace('#', '')
+      this.$clipboard(this.getLinkUrl())
     },
     computed: {
       relativeLinkUrl() {
@@ -65,6 +78,9 @@
       }
     },
     methods: {
+      getLinkUrl() {
+        return `${window.location.origin}${this.noteId ? `/${this.noteId}#${this.notePwd || ''}` : ''}`
+      },
       goToNote() {
         const hash = this.notePwd ? `#${this.notePwd}` : ''
         this.$router.push({path: `/${this.noteId}${hash}`})
@@ -108,6 +124,9 @@
       },
       createNewNote() {
         this.$router.push({name: 'home'})
+      },
+      copyLink() {
+        this.$clipboard(this.linkUrl)
       }
     }
   }

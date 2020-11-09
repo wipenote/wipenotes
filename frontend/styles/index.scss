@@ -200,12 +200,26 @@ body {
         }
         &-right {
           display: flex;
-          .button__timer {
+          .ttl-selector {
             background-color: transparent;
             border: 1px solid $grey;
             border-radius: 10px;
             padding: 12.25px 22px 12.25px 17px;
             margin-right: 16px;
+            position: relative;
+            user-select: none;
+            cursor: pointer;
+            outline: none;
+            min-width: 285px;
+
+            &-current {
+              display: flex;
+              align-items: center;
+            }
+
+            &.open .ttl-selector__list {
+              display: block;
+            }
             &-icon {
               display: inline-block;
               border-right: 1px solid $grey;
@@ -220,7 +234,26 @@ body {
               color: $purple;
               font-size: 16px;
               line-height: 19px;
-              margin-right: 22px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+            &__list {
+              display: none;
+              position: absolute;
+              width: 100%;
+              left: 0;
+              top: 50px;
+              list-style: none;
+              padding: 0;
+              background: #fff;
+              border-radius: 10px;
+              margin: 0;
+              box-shadow: 0 0 40px 0 rgba(86, 110, 149, 0.16);
+              border: solid 1px #f8f8f8;
+
+              &-item {
+                padding: 12.25px 22px 12.25px 17px;
+              }
             }
           }
           .field__password {
@@ -264,10 +297,16 @@ body {
         width: fit-content;
         max-width: 100%;
         padding: 0;
-        &__img img {
-          width: 24px;
-          margin-right: 18px;
-          margin-top: -2px;
+        margin-bottom: 42px;
+
+        &__copy {
+          cursor: pointer;
+
+          img {
+            width: 24px;
+            margin-right: 18px;
+            margin-bottom: 10px;
+          }
         }
       }
       .qr {
