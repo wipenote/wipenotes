@@ -43,11 +43,21 @@
       <div class="form__bottom">
         <div class="form__bottom-left">
           <button
+            id="home-button-attachment"
             class="button__attachment"
             @click="onClickAddAttachment"
+            @blur="hideAttachmentPopover"
           >
             <img src="/assets/images/attachment.svg" alt="attachment">
           </button>
+          <b-popover
+            :show.sync="isShowAttachmentPopover"
+            target="home-button-attachment"
+            placement="topright"
+            triggers=""
+          >
+            Max file size of attachment is 5MB
+          </b-popover>
         </div>
         <div class="form__bottom-right">
           <div
@@ -134,6 +144,8 @@ export default {
       isTTLSelectorOpen: false,
       isNoteCreating: false,
       noteCreatingError: '',
+      isShowAttachmentPopover: false,
+      attachmentPopoverText: '',
     }
   },
   computed: {
@@ -183,13 +195,26 @@ export default {
 
       return contentPromise
     },
+    showAttachmentPopover(text) {
+      this.attachmentPopoverText = text
+      this.isShowAttachmentPopover = true
+    },
+    hideAttachmentPopover() {
+      this.isShowAttachmentPopover = false
+    },
     async onFileChange(event) {
       console.log(event.target.files)
 
       for(const file of event.target.files){
+        if (file.size > 1024 * 1024 * 5) {
+          this.showAttachmentPopover()
+          return
+        }
+
         this.postFormData.append('images[]', file);
         const isImage = file.type.startsWith('image/')
 
+        // Max filesize = 5mb
         this.files.push({
           file,
           isImage: isImage,
