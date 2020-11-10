@@ -1,17 +1,21 @@
 {% extends "../layouts/default.njk" %}
 
 {% block content %}
-  <div id="app" class="form">
+  <div class="form">
     <div class="window">
       <div class="form__wrapper-img">
 
         <div class="form__top">
           <div class="textarea__wrapper">
-            <input class="textarea" id="textarea" type="password" name="text" placeholder="Write your note here" autofocus />
-            <button class="form__filename">
-              <span class="form__filename-icon"><img src="/assets/images/attachment.svg" alt="attachment"></span>
-              img12412.pdf
-            </button>
+            <textarea
+                class="textarea"
+                name="text"
+                placeholder="Write your note here"
+                autofocus></textarea>
+
+            <div>
+              <input style="display: none" type="file" ref="files"/>
+            </div>
           </div>
           <button class="button__open-text">
             <img src="/assets/images/eye.svg" alt="eye">
@@ -21,21 +25,31 @@
       </div>
       <div class="form__bottom">
         <div class="form__bottom-left">
-          <button class="button__attachment"><img src="/assets/images/attachment.svg" alt="attachment"></button>
-          <button class="button__attachment"><img src="/assets/images/picture.svg" alt="attach a photo"></button>
+          <button class="button__attachment">
+            <img src="/assets/images/attachment.svg" alt="attachment">
+          </button>
         </div>
         <div class="form__bottom-right">
-          <button class="ttl-selector">
-            <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
-            <span class="ttl-selector-text">Delete immediately</span>
-            <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
-          </button>
-          <button class="button__password">
-            <span class="button__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
-            Enter password
-          </button>
+          <div class="ttl-selector">
+            <div class="ttl-selector-current">
+              <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
+              <span class="ttl-selector-text">
+                Delete immediately
+              </span>
+              <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
+            </div>
+          </div>
+          <div class="field__password">
+            <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
+            <input
+                class="field__password__input"
+                type="text"
+                placeholder="Enter password"
+            />
+          </div>
         </div>
       </div>
+
     </div>
     <button class="button__submit" type="submit">Create note</button>
   </div>
