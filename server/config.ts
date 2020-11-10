@@ -87,5 +87,6 @@ export const Config = {
     databaseConfig: ConfigLink('database-config', {
       host: process.env.REDIS_HOST || 'localhost',
       port: process.env.REDIST_PORT || 6379,
+      password: process.env.REDIS_PASSWORD || '',
     }),
 }
