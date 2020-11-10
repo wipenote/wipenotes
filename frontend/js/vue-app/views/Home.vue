@@ -6,11 +6,21 @@
         <div class="form__top">
           <div class="textarea__wrapper">
             <textarea
+              v-if="isNoteVisible"
               v-model="message"
               class="textarea"
-              id="textarea"
               name="text"
               placeholder="Write your note here"
+              autofocus />
+
+            <textarea
+              v-else
+              v-model="currentMessage"
+              class="textarea"
+              name="text"
+              placeholder="Write your note here"
+              :disabled="!isNoteVisible"
+              :readonly="!isNoteVisible"
               autofocus />
 
             <div>
@@ -75,8 +85,21 @@
           </div>
         </div>
       </div>
+
+      <div v-if="noteCreatingError" class="form__bottom-error">
+        {{noteCreatingError}}
+      </div>
+
     </div>
-    <button @click="createNote" class="button__submit" type="submit">Create note</button>
+    <button
+      @click="createNote"
+      class="button__submit"
+      type="submit"
+      :disabled="isNoteCreating"
+    >
+      Create note
+      <b-spinner v-if="isNoteCreating" small variant="dark"></b-spinner>
+    </button>
   </div>
 </template>
 
@@ -99,6 +122,7 @@ export default {
       postFormData: new FormData(),
       ttlList: [
         { value: 'immediately', label: 'Delete immediately'},
+        { value: '30_sec', label: '30 seconds'},
         { value: '15_min', label: '15 minutes'},
         { value: '30_min', label: '30 minutes'},
         { value: '1_hour', label: '1 hour'},
@@ -108,6 +132,8 @@ export default {
       selectedTTLIndex: 0,
       selectedPassword: '',
       isTTLSelectorOpen: false,
+      isNoteCreating: false,
+      noteCreatingError: '',
     }
   },
   computed: {
@@ -119,6 +145,9 @@ export default {
       const selectedTTLObject = this.ttlList[this.selectedTTLIndex]
       return selectedTTLObject ? selectedTTLObject.value: ''
     },
+    currentMessage() {
+      return this.isNoteVisible ? this.message : new Array(this.message.length).fill('*').join('')
+    }
   },
   methods: {
     onClickTTLObject(index) {
@@ -178,18 +207,24 @@ export default {
       this.files = this.files.filter(file => file !== targetFile)
     },
     async createNote() {
-      const {noteId, encodedKey} = await createNote({
-        message: this.message,
-        files: this.files.map(file => file.file),
-        burnDate: this.selectedTTLObjectValue,
-        password: this.selectedPassword,
-      })
-      console.log('create note', noteId, encodedKey)
-      this.$router.push({
-        name: 'note-created',
-        params: {noteId: noteId, notePwd: this.selectedPassword ? '' : encodedKey},
-        hash: this.selectedPassword ? '' : `#${encodedKey}`
-      })
+      this.isNoteCreating = true
+      try {
+        const {noteId, encodedKey} = await createNote({
+          message: this.message,
+          files: this.files.map(file => file.file),
+          burnDate: this.selectedTTLObjectValue,
+          password: this.selectedPassword,
+        })
+        console.log('create note', noteId, encodedKey)
+        this.$router.push({
+          name: 'note-created',
+          params: {noteId: noteId, notePwd: this.selectedPassword ? '' : encodedKey},
+          hash: this.selectedPassword ? '' : `#${encodedKey}`
+        })
+      } catch (e) {
+        this.noteCreatingError = e.response && e.response.data && e.response.data.message || e.message
+      }
+      this.isNoteCreating = false
     },
     onClickSelectedTTL() {
       this.$refs.selectTTL.click()

@@ -84,5 +84,8 @@ export const Config = {
     // databaseType: ConfigLink('database-type', 'in-memory-database'),
     databaseType: ConfigLink('database-type', 'redis'),
 
-    databaseConfig: ConfigLink('database-config', {}),
+    databaseConfig: ConfigLink('database-config', {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: process.env.REDIST_PORT || 6379,
+    }),
 }

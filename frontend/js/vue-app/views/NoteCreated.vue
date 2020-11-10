@@ -17,22 +17,22 @@
         <qrcode-vue
           v-if="linkUrl"
           :value="linkUrl"
-          :size="250"
+          :size="200"
           level="H"
         />
 
       </div>
       <div class="form__socials-wrapper">
-        <a class="button__socials" href="#">
+        <a class="button__socials" :href="fbLink" target="_blank">
           <img src="/assets/images/facebook.svg" alt="facebook">
         </a>
-        <a class="button__socials" href="#">
+        <a class="button__socials" :href="telegramLink">
           <img src="/assets/images/telegram.svg" alt="telegram">
         </a>
-        <a class="button__socials" href="#">
+        <a class="button__socials" :href="whatsAppLink">
           <img src="/assets/images/whatsapp.svg" alt="whatsapp">
         </a>
-        <a class="button__socials" href="#">
+        <a class="button__socials" :href="emailLink">
           <img src="/assets/images/mail.svg" alt="mail">
         </a>
       </div>
@@ -71,15 +71,31 @@
     },
     computed: {
       relativeLinkUrl() {
-        return this.noteId ? `/${this.noteId}#${this.notePwd || ''}` : ''
+        return this.noteId ? `/${this.noteId}${this.notePwd ? '#' + this.notePwd : ''}` : ''
       },
       linkUrl() {
         return `${window.location.origin}${this.relativeLinkUrl}`
+      },
+      encodedUrlLink() {
+        return encodeURIComponent(this.linkUrl)
+      },
+      fbLink() {
+        return`https://www.facebook.com/sharer/sharer.php?u=${this.encodedUrlLink}`
+      },
+      emailLink() {
+        return `mailto:?&body=${this.encodedUrlLink}`
+      },
+      telegramLink() {
+        return `https://telegram.me/share/url?url=${this.encodedUrlLink}`
+      },
+      whatsAppLink() {
+        return `whatsapp://send?text=${this.encodedUrlLink}`
       }
     },
     methods: {
       getLinkUrl() {
-        return `${window.location.origin}${this.noteId ? `/${this.noteId}#${this.notePwd || ''}` : ''}`
+        const origin = window.location.origin
+        return `${origin}${this.noteId ? `/${this.noteId}${this.notePwd ? '#' + this.notePwd : ''}` : ''}`
       },
       goToNote() {
         const hash = this.notePwd ? `#${this.notePwd}` : ''
@@ -127,6 +143,10 @@
       },
       copyLink() {
         this.$clipboard(this.linkUrl)
+      },
+      shareFacebook() {
+        const shareLink = encodeURIComponent(this.linkUrl)
+        const fbLink = `https://www.facebook.com/sharer/sharer.php?u=${shareLink}`
       }
     }
   }

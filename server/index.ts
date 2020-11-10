@@ -10,6 +10,8 @@ import expressNobots from './thirdparty/express-nobots'
 import cors from 'cors'
 
 import * as database from './database'
+import * as utils from './utils'
+
 import {
   Config,
   initConfigurationWatch,
@@ -167,7 +169,7 @@ const main = async () => {
 
   app.get(
     '/api/note/:ID/status',
-    async (req: express.Request, res: express.Response) => {
+    async function (req: express.Request, res: express.Response) {
       try {
         const {ID} = req.params
         if (!isUuidV4(ID)) {
@@ -177,7 +179,7 @@ const main = async () => {
         }
 
         const noteStatus = await db.getNoteStatus(ID)
-
+        console.log('notestatus', noteStatus)
         logger.info(`Returning status of note with ID ${ID}`)
         res.json(noteStatus)
       } catch (err) {
@@ -185,7 +187,8 @@ const main = async () => {
           message: `GET /api/note/:ID/status Got error when loading status of note`,
           error: err,
         })
-        res.sendStatus(500)
+        await utils.errorJSON(err, res)
+        // res.sendStatus(500)
       }
     }
   )
@@ -243,10 +246,12 @@ const main = async () => {
           encryptionScheme,
           files,
         } = req.body
+        const burnTime = getBurnDateFromLabel(burnDate)
         const note: database.Note = {
           encryptedMessage,
           messageLength,
-          burnDate: getBurnDateFromLabel(burnDate),
+          burnDate: burnTime ? Date.now() + burnTime : 0,
+          burnTime,
           burnDateValue: burnDate,
           encryptionScheme,
           files,

@@ -183,6 +183,14 @@ body {
         justify-content: space-between;
         border-top: 1px solid #F7F7F7;
         padding: 22px 40px 0;
+        flex-wrap: wrap;
+
+        &-error {
+          display: flex;
+          color: #dc3545!important;
+          padding: 22px 40px 0;
+        }
+
         &-left {
           display: flex;
           .button__attachment {
@@ -200,6 +208,7 @@ body {
         }
         &-right {
           display: flex;
+          flex-wrap: wrap;
           .ttl-selector {
             background-color: transparent;
             border: 1px solid $grey;
@@ -211,6 +220,7 @@ body {
             cursor: pointer;
             outline: none;
             min-width: 285px;
+            flex-wrap: wrap;
 
             &-current {
               display: flex;
@@ -250,9 +260,11 @@ body {
               margin: 0;
               box-shadow: 0 0 40px 0 rgba(86, 110, 149, 0.16);
               border: solid 1px #f8f8f8;
+              z-index: 1;
 
               &-item {
                 padding: 12.25px 22px 12.25px 17px;
+                text-align: center;
               }
             }
           }
@@ -264,17 +276,20 @@ body {
             background-color: transparent;
             border: 1px solid $grey;
             border-radius: 10px;
-            padding: 12.25px 17px;
+            padding: 0 17px;
             width: 273px;
             max-width: 100%;
+            min-height: 51px;
 
             &__input {
               border: none;
               outline: none;
+              height: 100%;
+              padding-left: 18px;
             }
 
             &-icon {
-              margin-right: 18px;
+              //margin-right: 18px;
               img {
                 margin-top: -5px;
               }
@@ -298,6 +313,7 @@ body {
         max-width: 100%;
         padding: 0;
         margin-bottom: 42px;
+        word-break: break-all;
 
         &__copy {
           cursor: pointer;
@@ -459,19 +475,20 @@ button {
 }
 
 .note-confirm-modal {
+  max-width: 100%;
+
   &__content {
     text-align: center;
-    @media (min-width: 576px) {
-      & {
-        padding: 30px;
-      }
-    }
     @media (min-width: 768px) {
       & {
         padding: 80px;
       }
     }
-
+    @media (min-width: 576px) {
+      & {
+        padding: 30px;
+      }
+    }
 
   }
 
@@ -480,6 +497,10 @@ button {
     font-weight: 500;
     margin-bottom: 50px;
     color: #000;
+
+    &_mb-0 {
+      margin-bottom: 0;
+    }
   }
 
   &__button {
@@ -504,4 +525,27 @@ button {
     border: 1px solid #412ea0;
     padding: 18px 39px;
   }
+}
+
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: text-bottom;
+  border: .25rem solid currentColor;
+  border-right-color: transparent;
+  // stylelint-disable-next-line property-disallowed-list
+  border-radius: 50%;
+  animation: spinner-border .75s linear infinite;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: .2em;
 }

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import * as secrets from './secrets'
 import {urlencodeKey} from "./secrets";
 
@@ -37,23 +38,19 @@ const createNote = async ({
     encryptionScheme: secrets.getEncryptionScheme(),
   }
   console.log('POSTing note to API')
-  const response = await apiPost('/api/note', note)
-  const { ID } = await response.json()
+  const {data} = await axios.post('/api/note', note)
   
   const encodedKey = await urlencodeKey(key)
   
   return {
-    noteId: ID,
+    noteId: data.ID,
     encodedKey
   }
 }
 
 const getNote = async ({id, key}) => {
-  const response = await apiGet(`/api/note/${id}`)
-  if (!response.ok) {
-    throw new Error(`Getting ${id} did not work!`)
-  }
-  const note = await response.json()
+  const {data} = await axios.get(`/api/note/${id}`)
+  const note = data
   
   console.log('getNote', note)
   note.encryptedMessage.data = new Uint8Array(note.encryptedMessage.data).buffer
@@ -103,19 +100,8 @@ const getNote = async ({id, key}) => {
 }
 
 const getNoteStatus = async ({id}) => {
-  const response = await apiGet(`/api/note/${id}/status`)
-  if (!response.ok) {
-    if (response.status === 404) {
-      console.warn(`Note ${id} did not exist`)
-      return {
-        exists: false,
-        hasBurned: null,
-        hasBeenRead: null,
-      }
-    }
-    throw new Error(`Getting status for ${id} did not work!`)
-  }
-  return await response.json()
+  const {data} = await axios.get(`/api/note/${id}/status`)
+  return data
 }
 
 export {

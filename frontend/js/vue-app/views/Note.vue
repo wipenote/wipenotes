@@ -89,15 +89,20 @@
               placement="topleft"
               triggers=""
             >
-              {{passwordPopoverText}}
+              Please, enter password
             </b-popover>
           </form>
         </div>
+      </div>
+
+      <div v-if="isShowErrorText" class="form__bottom-error">
+        {{errorText}}
       </div>
     </div>
     <button @click="createNewNote" class="button__submit" type="submit">Create a new note</button>
 
     <b-modal
+      id="confirm-modal"
       ref="confirmModal"
       no-close-on-backdrop
       no-close-on-esc
@@ -106,6 +111,9 @@
       hide-header-close
       centered
       :visible="isVisibleConfirmModal"
+      body-class="note-confirm-modal__body"
+      dialog-class="note-confirm-modal__dialog"
+      modal-class="note-confirm-modal"
     >
 
       <div
@@ -119,14 +127,39 @@
         v-else-if="noteStatusData && noteStatusData.hasBurned"
         class="note-confirm-modal__content"
       >
-        <div class="note-confirm-modal__header">The note is not exist or has been deleted</div>
+        <div class="note-confirm-modal__actions">
+          <button
+            class="note-confirm-modal__button note-confirm-modal__read-button button__submit"
+            @click="createNewNote"
+          >
+            Create new note
+          </button>
+        </div>
+      </div>
+
+      <div
+        v-else-if="noteStatusError"
+        class="note-confirm-modal__content"
+      >
+        <div class="note-confirm-modal__header">
+          {{noteStatusError}}
+        </div>
+
+        <div class="note-confirm-modal__actions">
+          <button
+            class="note-confirm-modal__button note-confirm-modal__read-button button__submit"
+            @click="createNewNote"
+          >
+            Create new note
+          </button>
+        </div>
       </div>
 
       <div
         v-else
         class="note-confirm-modal__content"
       >
-        <div class="note-confirm-modal__header">The note will be deleted reading</div>
+        <div class="note-confirm-modal__header">The note will be deleted</div>
         <div class="note-confirm-modal__actions">
           <button
             class="note-confirm-modal__button note-confirm-modal__read-button button__submit"
@@ -161,7 +194,6 @@
     data() {
       return {
         message: '',
-        files: [],
         noteId: '',
         noteHash: '',
         noteLoading: false,
@@ -175,7 +207,8 @@
         isVisibleConfirmModal: true,
         isNoteOpened: false,
         isShowPasswordPopover: false,
-        passwordPopoverText: '',
+        errorText: '',
+        isShowErrorText: false,
       }
     },
     mounted() {
@@ -190,19 +223,22 @@
         const statusData = this.noteStatusData
 
         if (this.isNoteOpened) {
-          return this.message
+          return this.noteData && this.noteData.message
         }
 
-        if (!this.noteStatusData || !this.noteStatusData.messageLength) {
+        if (!statusData || !statusData.messageLength) {
           return ''
         }
 
-        return new Array(this.noteStatusData.messageLength).fill('*').join('')
+        return new Array(statusData.messageLength).fill('*').join('')
       },
       fileStatuses() {
         return this.noteStatusData && this.noteStatusData.files ?
           new Array(this.noteStatusData.files).fill('***********')
           : []
+      },
+      files() {
+        return this.noteData && this.noteData.files || []
       }
     },
     methods: {
@@ -210,17 +246,13 @@
         this.closeShowPasswordPopover()
       },
       onPasswordFieldBlur() {
-
+        this.closeShowPasswordPopover()
       },
       onClickShowNote() {
         this.showNote()
       },
       hideConfirmModal() {
         this.isVisibleConfirmModal = false
-      },
-      handleFilesUpload(){
-        console.log('this.$refs.files.files', this.$refs.files.files)
-        this.files = this.$refs.files.files;
       },
       getFileDataURL(file) {
         if (!file) {
@@ -253,8 +285,9 @@
           console.log('getNoteStatus', status)
           this.noteStatusData = status
         } catch (e) {
-          console.error(e)
-          this.noteStatusError = e.message
+          console.error('loadNoteStatus', e)
+          console.dir(e)
+          this.noteStatusError = e.response && e.response.data && e.response.data.message || e.message
         }
 
         this.noteStatusLoading = false
@@ -277,26 +310,20 @@
           const data = await getNote({id: this.noteId, key })
           console.log('getnote', data)
           this.noteData = data
-          this.message = data.message
-          this.files = data.files
         } catch (e) {
           this.noteLoading = false
           console.error(e.message)
-          this.showPasswordPopover(e.message)
+          this.showPageError(e.message)
           throw e
         }
 
         this.noteLoading = false
       },
-      showPasswordPopover(text) {
-        if (text) {
-          this.passwordPopoverText = text
-        }
+      showPasswordPopover() {
         this.isShowPasswordPopover = true
       },
       closeShowPasswordPopover() {
         this.isShowPasswordPopover = false
-        this.passwordPopoverText = ''
       },
       async onReadNow() {
         this.$refs.confirmModal.hide()
@@ -304,7 +331,7 @@
           await this.loadNote()
           this.isNoteOpened = true
         } else {
-          this.showPasswordPopover('Please, enter password')
+          this.showPasswordPopover()
         }
 
       },
@@ -327,11 +354,25 @@
           return
         }
         this.closeShowPasswordPopover()
-        await this.loadNote()
+        this.hidePageError()
+
+        if (this.noteLoading) {
+          return
+        }
+        if (!this.noteData) {
+          await this.loadNote()
+        }
         this.isNoteOpened = true
       },
       async onPasswordEnter() {
         await this.showNote()
+      },
+      showPageError(text) {
+        this.errorText = text
+        this.isShowErrorText = true
+      },
+      hidePageError() {
+        this.isShowErrorText = false
       }
     }
   }

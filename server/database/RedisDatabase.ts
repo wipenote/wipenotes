@@ -4,6 +4,7 @@ import {logger} from '../logger'
 
 import {NoteId, LogId, Note, NoteOptions, Log, Database} from './types'
 import _ from 'lodash'
+import {HandledError} from "../utils";
 
 /**
  * Database implementation with Redis as backend.
@@ -32,7 +33,7 @@ export class RedisDatabase implements Database {
     const id = uuid.v4() as NoteId
     const jsonified = JSON.stringify(note)
     logger.debug(`Storing note ${id} in Redis under note-${id}`)
-    if (note.burnDate) {
+    if (note.burnTime) {
       await this.redis.set(`note-${id}`, jsonified, 'EX', note.burnDate)
       await this.redis.set(`read-${id}`, '[]', 'EX', note.burnDate)
     } else {
@@ -51,6 +52,11 @@ export class RedisDatabase implements Database {
   }
 
   async getNoteStatus(noteId: NoteId) {
+    const doesExist = await this.redis.exists(`note-${noteId}`)
+    if (!doesExist) {
+      throw new HandledError(`Note with Id "${noteId}" does not exist or was deleted.`, 404)
+    }
+
     const keyValue = await this.redis.get(`note-${noteId}`)
 
     const note = JSON.parse(keyValue || '')
@@ -60,8 +66,11 @@ export class RedisDatabase implements Database {
         hasBurned: true,
       }
     }
-    console.log('getNote', note)
     const currentTime = Date.now()
+    if (note.burnDate && currentTime >= note.burnDate) {
+      await this.redis.del(`note-${noteId}`)
+      throw new HandledError(`Note with Id "${noteId}" does not exist or was deleted`, 404)
+    }
 
     return {
       hasBurned: false,
@@ -74,27 +83,21 @@ export class RedisDatabase implements Database {
 
     const doesExist = await this.redis.exists(`note-${noteId}`)
     if (!doesExist) {
-      throw new Error(`Note with Id "${noteId}" does not exist.`)
+      throw new HandledError(`Note with Id "${noteId}" does not exist.`)
     }
 
     const keyValue = await this.redis.get(`note-${noteId}`)
     if (!keyValue) {
-      throw new Error('Note does not exist')
+      throw new HandledError('Note does not exist')
     }
 
     const note = JSON.parse(keyValue || '')
 
-    console.log('getNote', note)
     const currentTime = Date.now()
     if (note.burnDate && currentTime >= note.burnDate) {
-      const A = new Date(note.burnDate)
-      const B = new Date(currentTime)
-      throw new Error(
-        `Note with id "${noteId}" allows only access before ${A} ` +
-        `but currently it is ${B}`
-      )
+      throw new HandledError(`Note with Id "${noteId}" does not exist or was deleted`, 404)
     } else {
-      // await this.redis.del(`note-${noteId}`)
+      await this.redis.del(`note-${noteId}`)
     }
 
     return note
