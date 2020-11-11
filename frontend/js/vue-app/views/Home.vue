@@ -284,7 +284,15 @@ export default {
       this.files = this.files.filter(file => file !== targetFile)
     },
     async createNote() {
+      this.noteCreatingError = ''
+
+      if (!this.files.length && !this.message) {
+        this.noteCreatingError = 'Please, create attachment or make message'
+        return
+      }
+
       this.isNoteCreating = true
+
       try {
         const {noteId, encodedKey} = await createNote({
           message: this.message,

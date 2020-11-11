@@ -48,19 +48,15 @@ const createNote = async ({
   }
 }
 
-const getNote = async ({id, key}) => {
-  const {data} = await axios.get(`/api/note/${id}`)
-  const note = data
-  
-  console.log('getNote', note)
-  note.encryptedMessage.data = new Uint8Array(note.encryptedMessage.data).buffer
-  note.encryptedMessage.IV = new Uint8Array(note.encryptedMessage.IV)
+const getNote = async ({key, encryptedNote}) => {
+  encryptedNote.encryptedMessage.data = new Uint8Array(encryptedNote.encryptedMessage.data).buffer
+  encryptedNote.encryptedMessage.IV = new Uint8Array(encryptedNote.encryptedMessage.IV)
   
   let decryptedMessage = ''
   try {
     decryptedMessage = await secrets.decryptMessage(key, {
-      encryptedMessage: note.encryptedMessage.data,
-      IV: note.encryptedMessage.IV,
+      encryptedMessage: encryptedNote.encryptedMessage.data,
+      IV: encryptedNote.encryptedMessage.IV,
     })
   } catch (e) {
     throw new Error('Password is invalid. Please, try again')
@@ -68,7 +64,7 @@ const getNote = async ({id, key}) => {
   
   const files = []
   
-  for (let file of note.files) {
+  for (let file of encryptedNote.files) {
     const fileData = await secrets.decryptData(key, {
       encryptedMessage: new Uint8Array(file.file.data).buffer,
       IV: new Uint8Array(file.file.IV)
@@ -95,7 +91,7 @@ const getNote = async ({id, key}) => {
   return {
     message: decryptedMessage,
     files,
-    burnDate: note.burnDate,
+    burnDate: encryptedNote.burnDate,
   }
 }
 
