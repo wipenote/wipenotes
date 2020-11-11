@@ -95,7 +95,7 @@
           </div>
         </div>
 
-        <div class="form__bottom-right_mobile">
+        <div style="display: none" class="form__bottom-right_mobile">
           <div @click="openMobileNoteSettings">open settings icon</div>
           <div @click="toggleNoteVisibility">toggle show note icon</div>
         </div>
