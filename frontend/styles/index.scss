@@ -209,65 +209,6 @@ body {
         &-right {
           display: flex;
           flex-wrap: wrap;
-          .ttl-selector {
-            background-color: transparent;
-            border: 1px solid $grey;
-            border-radius: 10px;
-            padding: 12.25px 22px 12.25px 17px;
-            margin-right: 16px;
-            position: relative;
-            user-select: none;
-            cursor: pointer;
-            outline: none;
-            min-width: 285px;
-            flex-wrap: wrap;
-
-            &-current {
-              display: flex;
-              align-items: center;
-            }
-
-            &.open .ttl-selector__list {
-              display: block;
-            }
-            &-icon {
-              display: inline-block;
-              border-right: 1px solid $grey;
-              padding-right: 14px;
-              margin-right: 19px;
-              // height: 26px;
-              img {
-                margin-top: -1px;
-              }
-            }
-            &-text {
-              color: $purple;
-              font-size: 16px;
-              line-height: 19px;
-              margin-left: auto;
-              margin-right: auto;
-            }
-            &__list {
-              display: none;
-              position: absolute;
-              width: 100%;
-              left: 0;
-              top: 50px;
-              list-style: none;
-              padding: 0;
-              background: #fff;
-              border-radius: 10px;
-              margin: 0;
-              box-shadow: 0 0 40px 0 rgba(86, 110, 149, 0.16);
-              border: solid 1px #f8f8f8;
-              z-index: 1;
-
-              &-item {
-                padding: 12.25px 22px 12.25px 17px;
-                text-align: center;
-              }
-            }
-          }
           .field__password {
             color: $grey;
             font-size: 16px;
@@ -438,6 +379,66 @@ body {
           }
         }
       }
+    }
+  }
+}
+
+.ttl-selector {
+  background-color: transparent;
+  border: 1px solid $grey;
+  border-radius: 10px;
+  padding: 12.25px 22px 12.25px 17px;
+  margin-right: 16px;
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+  min-width: 285px;
+  flex-wrap: wrap;
+
+  &-current {
+    display: flex;
+    align-items: center;
+  }
+
+  &.open .ttl-selector__list {
+    display: block;
+  }
+  &-icon {
+    display: inline-block;
+    border-right: 1px solid $grey;
+    padding-right: 14px;
+    margin-right: 19px;
+    // height: 26px;
+    img {
+      margin-top: -1px;
+    }
+  }
+  &-text {
+    color: $purple;
+    font-size: 16px;
+    line-height: 19px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  &__list {
+    display: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 50px;
+    list-style: none;
+    padding: 0;
+    background: #fff;
+    border-radius: 10px;
+    margin: 0;
+    box-shadow: 0 0 40px 0 rgba(86, 110, 149, 0.16);
+    border: solid 1px #f8f8f8;
+    z-index: 1;
+
+    &-item {
+      padding: 12.25px 22px 12.25px 17px;
+      text-align: center;
     }
   }
 }

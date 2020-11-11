@@ -94,6 +94,11 @@
             />
           </div>
         </div>
+
+        <div class="form__bottom-right_mobile">
+          <div @click="openMobileNoteSettings">open settings icon</div>
+          <div @click="toggleNoteVisibility">toggle show note icon</div>
+        </div>
       </div>
 
       <div v-if="noteCreatingError" class="form__bottom-error">
@@ -110,6 +115,52 @@
       Create note
       <b-spinner v-if="isNoteCreating" small variant="dark"></b-spinner>
     </button>
+
+
+    <b-modal
+      id="confirm-modal"
+      ref="confirmModal"
+      hide-footer
+      hide-header
+      centered
+      :visible="isVisibleMobileSettingsModal"
+      body-class="note-confirm-modal__body"
+      dialog-class="note-confirm-modal__dialog"
+      modal-class="note-confirm-modal"
+    >
+
+      <div
+        class="ttl-selector"
+        :class="{ open: isTTLSelectorOpen }"
+        tabindex="0"
+        @click="isTTLSelectorOpen = !isTTLSelectorOpen"
+        @blur="isTTLSelectorOpen = false"
+      >
+        <div class="ttl-selector-current">
+          <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
+          <span class="ttl-selector-text">
+                {{selectedTTLObjectLabel}}
+              </span>
+          <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
+        </div>
+        <ul class="ttl-selector__list">
+          <li
+            v-for="(ttlObject, index) in ttlList"
+            @click="onClickTTLObject(index)"
+            class="ttl-selector__list-item"
+          >
+            <span class="ttl-selector-text">{{ttlObject.label}}</span>
+          </li>
+        </ul>
+      </div>
+
+      <input
+        class="field__password__input"
+        type="text"
+        v-model="selectedPassword"
+        placeholder="Enter password"
+      />
+    </b-modal>
   </div>
 </template>
 
@@ -146,6 +197,7 @@ export default {
       noteCreatingError: '',
       isShowAttachmentPopover: false,
       attachmentPopoverText: '',
+      isVisibleMobileSettingsModal: false,
     }
   },
   computed: {
@@ -256,6 +308,12 @@ export default {
     },
     toggleNoteVisibility() {
       this.isNoteVisible = !this.isNoteVisible
+    },
+    openMobileNoteSettings() {
+      this.isVisibleMobileSettingsModal = true
+    },
+    closeMobileNoteSettings() {
+      this.isVisibleMobileSettingsModal = true
     }
   }
 }
