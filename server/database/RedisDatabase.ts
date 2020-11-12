@@ -1,5 +1,7 @@
 import uuid from 'uuid'
 import Redis, {RedisOptions} from 'ioredis'
+import * as generator from 'generate-password';
+
 import {logger} from '../logger'
 
 import {NoteId, LogId, Note, NoteOptions, Log, Database} from './types'
@@ -30,7 +32,10 @@ export class RedisDatabase implements Database {
   }
 
   async storeNote(note: Note) {
-    const id = uuid.v4() as NoteId
+    const id = generator.generate({
+      length: 8,
+      numbers: true
+    }) as NoteId
     const jsonified = JSON.stringify(note)
     logger.debug(`Storing note ${id} in Redis under note-${id}`)
     if (note.burnTime) {

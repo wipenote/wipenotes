@@ -300,20 +300,16 @@
 
         try {
           const hash = this.noteHash
-          let key
-          if (hash) {
-            key = await secrets.urldecodeKey(hash)
-          } else {
-            key = await secrets.createKeyFromPassword(this.notePassword)
-          }
 
           console.log('urlencodedKey', hash)
-          console.log('key', key)
           if (!this.noteDataEncrypted) {
             const response = await axios.get(`/api/note/${this.noteId}`)
             this.noteDataEncrypted = response.data
           }
-          const data = await getNote({key, encryptedNote: this.noteDataEncrypted })
+          const data = await getNote({
+            password: this.noteHash,
+            encryptedNote: this.noteDataEncrypted
+          })
           console.log('getnote', data)
           this.noteData = data
         } catch (e) {

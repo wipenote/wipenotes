@@ -26,7 +26,7 @@ const createNote = async ({
   files,
   burnDate,
   }) => {
-  const key = password ? await secrets.createKeyFromPassword(password): await secrets.generateKey()
+  const key = await secrets.createKeyFromPassword(password)
   console.log('key', key)
   const note = {
     encryptedMessage: await secrets.encryptMessage(message, key),
@@ -48,7 +48,8 @@ const createNote = async ({
   }
 }
 
-const getNote = async ({key, encryptedNote}) => {
+const getNote = async ({password, encryptedNote}) => {
+  let key = await secrets.createKeyFromPassword(password)
   encryptedNote.encryptedMessage.data = new Uint8Array(encryptedNote.encryptedMessage.data).buffer
   encryptedNote.encryptedMessage.IV = new Uint8Array(encryptedNote.encryptedMessage.IV)
   
