@@ -22,20 +22,6 @@
         />
 
       </div>
-      <div class="form__socials-wrapper">
-        <a class="button__socials" :href="fbLink" target="_blank">
-          <img src="/assets/images/facebook.svg" alt="facebook">
-        </a>
-        <a class="button__socials" :href="telegramLink">
-          <img src="/assets/images/telegram.svg" alt="telegram">
-        </a>
-        <a class="button__socials" :href="whatsAppLink">
-          <img src="/assets/images/whatsapp.svg" alt="whatsapp">
-        </a>
-        <a class="button__socials" :href="emailLink">
-          <img src="/assets/images/mail.svg" alt="mail">
-        </a>
-      </div>
     </div>
     <button @click="createNewNote" class="button__submit" type="submit">Create a new note</button>
   </fragment>

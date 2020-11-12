@@ -60,7 +60,7 @@
             <img src="/assets/images/attachment.svg" alt="attachment">
           </button>
         </div>
-        <div class="form__bottom-right">
+        <div class="form__bottom-right form__bottom-right_desktop">
           <button class="ttl-selector" disabled>
             <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
             <span class="ttl-selector-text">Delete immediately</span>
@@ -93,6 +93,15 @@
             </b-popover>
           </form>
         </div>
+
+        <div class="form__bottom-right form__bottom-right_mobile">
+          <button @click="openMobileNoteSettings" class="button__attachment button__attachment_mobile">
+            <img src="/assets/images/settings.svg" alt="settings">
+          </button>
+          <button @click="onClickShowNote" class="button__attachment button__attachment_mobile">
+            <img src="/assets/images/eye.svg" alt="open the password">
+          </button>
+        </div>
       </div>
 
       <div v-if="isShowErrorText" class="form__bottom-error">
@@ -113,7 +122,7 @@
       :visible="isVisibleConfirmModal"
       body-class="note-confirm-modal__body"
       dialog-class="note-confirm-modal__dialog"
-      modal-class="note-confirm-modal"
+      modal-class="note-confirm-modal modal-note"
     >
 
       <div
@@ -211,6 +220,7 @@
         isShowPasswordPopover: false,
         errorText: '',
         isShowErrorText: false,
+        isVisibleMobileSettingsModal: false,
       }
     },
     mounted() {
@@ -357,9 +367,6 @@
         link.click();
       },
       async showNote() {
-        if (this.isNoteOpened) {
-          return
-        }
         this.closeShowPasswordPopover()
         this.hidePageError()
 
@@ -380,7 +387,16 @@
       },
       hidePageError() {
         this.isShowErrorText = false
-      }
+      },
+      openMobileNoteSettings() {
+        this.isVisibleMobileSettingsModal = true
+      },
+      closeMobileNoteSettings() {
+        this.isVisibleMobileSettingsModal = false
+      },
+      toggleNoteVisibility() {
+        this.isNoteVisible = !this.isNoteVisible
+      },
     }
   }
 </script>
