@@ -99,9 +99,10 @@
         <div class="form__bottom-right form__bottom-right_mobile">
           <button @click="openMobileNoteSettings" class="button__attachment button__attachment_mobile">
             <img src="assets/images/settings.svg" alt="settings">
-            </button>
+          </button>
           <button @click="toggleNoteVisibility" class="button__attachment button__attachment_mobile">
             <img src="assets/images/eye.svg" alt="open the password">
+          </button>
         </div>
       </div>
 
