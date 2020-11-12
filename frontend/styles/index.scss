@@ -505,7 +505,7 @@ body {
   }
   
   // modal setting mobile
-  .modal {
+  .modal.modal-settings {
           
     .modal-dialog {
       border-color: transparent;
@@ -810,7 +810,7 @@ button {
   }
 }
 
-.note-confirm-modal {
+.note-confirm-modal.modal-note {
   max-width: 889px;
     /* min-height: 533px; */
     margin: 0 auto;
@@ -819,7 +819,7 @@ button {
       min-height: calc(100% - (.5rem * 2));
     }
 
-  &__content {
+  .note-confirm-modal__content {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
@@ -857,7 +857,7 @@ button {
     }
   }
 
-  &__header {
+  .note-confirm-modal__header {
     font-size: 22px;
     font-weight: 500;
     margin-bottom: 50px;
@@ -868,7 +868,7 @@ button {
     }
   }
 
-  &__button {
+  .note-confirm-modal__button {
     min-width: 200px;
     margin-top: 0 !important;
 
@@ -884,14 +884,14 @@ button {
     }
   }
 
-  &__read-button {
+  .note-confirm-modal__read-button {
     margin-right: 23px;
     @media (max-width: 767px) {
       margin-right: 16px;
     }
   }
 
-  &__later-button {
+  .note-confirm-modal__later-button {
     font-size: 18px;
     line-height: 22px;
     color: #412ea0;

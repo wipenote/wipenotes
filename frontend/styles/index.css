@@ -632,7 +632,7 @@ body .window .form__socials-wrapper .button__socials:last-child {
   margin-right: 0;
 }
 
-body .modal .modal-dialog {
+body .modal.modal-settings .modal-dialog {
   border-color: transparent;
   height: 100%;
   width: 100%;
@@ -640,20 +640,20 @@ body .modal .modal-dialog {
   margin: 0;
 }
 
-body .modal .modal-dialog .modal-content {
+body .modal.modal-settings .modal-dialog .modal-content {
   height: 100%;
   width: 100%;
   background-color: #2E2E2E;
 }
 
-body .modal .modal-dialog .modal-content .modal-body {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body {
   max-width: 317px;
   margin-left: auto;
   margin-right: auto;
   padding-top: 62px;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .modal__wrapper {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .modal__wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -663,7 +663,7 @@ body .modal .modal-dialog .modal-content .modal-body .modal__wrapper {
   margin-bottom: 76px;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .modal__wrapper-title {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .modal__wrapper-title {
   color: #ffffff;
   font-size: 22px;
   line-height: 26px;
@@ -671,30 +671,30 @@ body .modal .modal-dialog .modal-content .modal-body .modal__wrapper-title {
   max-width: 85%;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .modal__wrapper .modal__close {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .modal__wrapper .modal__close {
   background: transparent;
   border: 0;
   padding: 0;
   outline: none !important;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .ttl-selector-current {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .ttl-selector-current {
   border: #585858;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .ttl-selector-current .ttl-selector-icon {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .ttl-selector-current .ttl-selector-icon {
   border-right: 0;
   padding-right: 0;
   margin-right: 18px;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .ttl-selector-current .ttl-selector-text {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .ttl-selector-current .ttl-selector-text {
   color: #ffffff;
   margin-left: 0;
   margin-right: auto;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .field__password {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .field__password {
   color: #E2DDDD;
   font-size: 16px;
   line-height: 19px;
@@ -716,7 +716,7 @@ body .modal .modal-dialog .modal-content .modal-body .field__password {
   margin-top: 18px;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .field__password__input {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .field__password__input {
   border: none;
   outline: none;
   height: 100%;
@@ -725,7 +725,7 @@ body .modal .modal-dialog .modal-content .modal-body .field__password__input {
   color: #ffffff;
 }
 
-body .modal .modal-dialog .modal-content .modal-body .field__password-icon img {
+body .modal.modal-settings .modal-dialog .modal-content .modal-body .field__password-icon img {
   margin-top: -5px;
 }
 
@@ -999,7 +999,7 @@ button:focus {
   }
 }
 
-.note-confirm-modal {
+.note-confirm-modal.modal-note {
   max-width: 889px;
   /* min-height: 533px; */
   margin: 0 auto;
@@ -1007,36 +1007,36 @@ button:focus {
           transform: translate(0, 0) !important;
 }
 
-.note-confirm-modal-centered {
+.note-confirm-modal.modal-note-centered {
   min-height: calc(100% - (.5rem * 2));
 }
 
-.note-confirm-modal__content {
+.note-confirm-modal.modal-note .note-confirm-modal__content {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
 }
 
 @media (min-width: 768px) {
-  .note-confirm-modal__content {
+  .note-confirm-modal.modal-note .note-confirm-modal__content {
     padding: 80px;
   }
 }
 
 @media (min-width: 576px) {
-  .note-confirm-modal__content {
+  .note-confirm-modal.modal-note .note-confirm-modal__content {
     padding: 30px;
   }
 }
 
-.note-confirm-modal .modal-content {
+.note-confirm-modal.modal-note .modal-content {
   border: 0;
   border-radius: 0;
   background-color: #fff !important;
   height: auto !important;
 }
 
-.note-confirm-modal .modal-content .modal-body {
+.note-confirm-modal.modal-note .modal-content .modal-body {
   padding: 50px 48px;
   -webkit-box-shadow: 0px 0px 40px rgba(18, 28, 51, 0.05);
           box-shadow: 0px 0px 40px rgba(18, 28, 51, 0.05);
@@ -1052,60 +1052,60 @@ button:focus {
 }
 
 @media (max-width: 991) {
-  .note-confirm-modal .modal-content .modal-body {
+  .note-confirm-modal.modal-note .modal-content .modal-body {
     margin: 0 32px;
   }
 }
 
 @media (max-width: 576px) {
-  .note-confirm-modal .modal-content .modal-body {
+  .note-confirm-modal.modal-note .modal-content .modal-body {
     padding: 80px 32px;
   }
 }
 
-.note-confirm-modal__header {
+.note-confirm-modal.modal-note .note-confirm-modal__header {
   font-size: 22px;
   font-weight: 500;
   margin-bottom: 50px;
   color: #000;
 }
 
-.note-confirm-modal__header_mb-0 {
+.note-confirm-modal.modal-note .note-confirm-modal__header_mb-0 {
   margin-bottom: 0;
 }
 
-.note-confirm-modal__button {
+.note-confirm-modal.modal-note .note-confirm-modal__button {
   min-width: 200px;
   margin-top: 0 !important;
 }
 
 @media (min-width: 576px) {
-  .note-confirm-modal__button {
+  .note-confirm-modal.modal-note .note-confirm-modal__button {
     min-width: 200px;
   }
 }
 
 @media (max-width: 490px) {
-  .note-confirm-modal__button {
+  .note-confirm-modal.modal-note .note-confirm-modal__button {
     width: 100%;
     margin-bottom: 16px;
   }
-  .note-confirm-modal__button:last-child {
+  .note-confirm-modal.modal-note .note-confirm-modal__button:last-child {
     margin-bottom: 0;
   }
 }
 
-.note-confirm-modal__read-button {
+.note-confirm-modal.modal-note .note-confirm-modal__read-button {
   margin-right: 23px;
 }
 
 @media (max-width: 767px) {
-  .note-confirm-modal__read-button {
+  .note-confirm-modal.modal-note .note-confirm-modal__read-button {
     margin-right: 16px;
   }
 }
 
-.note-confirm-modal__later-button {
+.note-confirm-modal.modal-note .note-confirm-modal__later-button {
   font-size: 18px;
   line-height: 22px;
   color: #412ea0;

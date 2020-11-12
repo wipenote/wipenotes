@@ -130,7 +130,7 @@
       :visible="isVisibleMobileSettingsModal"
       body-class="note-confirm-modal__body"
       dialog-class="note-confirm-modal__dialog"
-      modal-class="note-confirm-modal"
+      modal-class="note-confirm-modal modal-settings"
     >
 
       <div class="modal__wrapper">
