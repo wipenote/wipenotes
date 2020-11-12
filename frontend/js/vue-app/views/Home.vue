@@ -6,6 +6,7 @@
         <div class="form__top">
           <div class="textarea__wrapper">
             <textarea
+              onkeyup="textAreaAdjust(this)"
               v-if="isNoteVisible"
               v-model="message"
               class="textarea"
@@ -59,7 +60,7 @@
             Max file size of attachment is 5MB
           </b-popover>
         </div>
-        <div class="form__bottom-right">
+        <div class="form__bottom-right form__bottom-right_desktop">
           <div
             class="ttl-selector"
             :class="{ open: isTTLSelectorOpen }"
@@ -95,9 +96,13 @@
           </div>
         </div>
 
-        <div class="form__bottom-right_mobile">
-          <div @click="openMobileNoteSettings">open settings icon</div>
-          <div @click="toggleNoteVisibility">toggle show note icon</div>
+        <div class="form__bottom-right form__bottom-right_mobile">
+          <button @click="openMobileNoteSettings" class="button__attachment button__attachment_mobile">
+            <img src="assets/images/settings.svg" alt="settings">
+            </button>
+          <button @click="toggleNoteVisibility" class="button__attachment button__attachment_mobile">
+            <img src="assets/images/eye.svg" alt="open the password">
+            </button>
         </div>
       </div>
 
@@ -129,6 +134,12 @@
       modal-class="note-confirm-modal"
     >
 
+      <div class="modal__wrapper">
+        <h2 class="modal__wrapper-title">Note settings</h2>
+        <b-button class="modal__close" @click="$bvModal.hide('confirm-modal')">
+          <img src="assets/images/cross.svg" alt="close">
+        </b-button>
+      </div>
       <div
         class="ttl-selector"
         :class="{ open: isTTLSelectorOpen }"
@@ -137,11 +148,11 @@
         @blur="isTTLSelectorOpen = false"
       >
         <div class="ttl-selector-current">
-          <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
+          <span class="ttl-selector-icon"><img src="/assets/images/timer-purple.svg" alt="attachment"></span>
           <span class="ttl-selector-text">
                 {{selectedTTLObjectLabel}}
               </span>
-          <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
+          <span><img class="" src="/assets/images/arrow-white.svg" alt="arrow"></span>
         </div>
         <ul class="ttl-selector__list">
           <li
@@ -154,12 +165,15 @@
         </ul>
       </div>
 
-      <input
-        class="field__password__input"
-        type="text"
-        v-model="selectedPassword"
-        placeholder="Enter password"
-      />
+      <div class="field__password">
+        <span class="field__password-icon"><img src="/assets/images/lock-purple.svg" alt="lock"></span>
+        <input
+          class="field__password__input"
+          type="text"
+          v-model="selectedPassword"
+          placeholder="Enter password"
+        />
+      </div>
     </b-modal>
   </div>
 </template>
