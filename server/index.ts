@@ -172,11 +172,6 @@ const main = async () => {
     async function (req: express.Request, res: express.Response) {
       try {
         const {ID} = req.params
-        if (!isUuidV4(ID)) {
-          logger.error(`ID "${ID}" is not a valid UUIDv4`)
-          res.sendStatus(400)
-          return
-        }
 
         const noteStatus = await db.getNoteStatus(ID)
         console.log('notestatus', noteStatus)
@@ -198,11 +193,6 @@ const main = async () => {
     async (req: express.Request, res: express.Response) => {
       try {
         const {ID} = req.params
-        if (!isUuidV4(ID)) {
-          logger.error(`ID "${ID}" is not a valid UUIDv4`)
-          res.sendStatus(400)
-          return
-        }
 
         const logId = await createLog(req)
         const exists = await db.noteExists(ID)

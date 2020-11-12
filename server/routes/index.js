@@ -12,11 +12,6 @@ router.get(
   async (req, res) => {
     try {
       const { ID } = req.params
-      if (!utils.isUuidV4(ID)) {
-        logger.error(`ID "${ID}" is not a valid UUIDv4`)
-        res.sendStatus(400)
-        return
-      }
       
       const exists = await db.noteExists(ID)
       if (!exists) {
@@ -49,11 +44,6 @@ router.get(
   async (req, res) => {
     try {
       const { ID } = req.params
-      if (!isUuidV4(ID)) {
-        logger.error(`ID "${ID}" is not a valid UUIDv4`)
-        res.sendStatus(400)
-        return
-      }
       
       const logId = await createLog(req)
       const exists = await db.noteExists(ID)

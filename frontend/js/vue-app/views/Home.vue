@@ -102,7 +102,6 @@
             </button>
           <button @click="toggleNoteVisibility" class="button__attachment button__attachment_mobile">
             <img src="assets/images/eye.svg" alt="open the password">
-            </button>
         </div>
       </div>
 
@@ -185,6 +184,7 @@ import {
   getNote,
   getNoteStatus,
 } from '../utils'
+import * as generator from 'generate-password'
 
 export default {
   name: 'Home',
@@ -298,19 +298,32 @@ export default {
       this.files = this.files.filter(file => file !== targetFile)
     },
     async createNote() {
+      this.noteCreatingError = ''
+
+      if (!this.files.length && !this.message) {
+        this.noteCreatingError = 'Please, create attachment or make message'
+        return
+      }
+
       this.isNoteCreating = true
+
+      const password = this.selectedPassword || generator.generate({
+        length: 10,
+        numbers: true
+      });
+
       try {
         const {noteId, encodedKey} = await createNote({
           message: this.message,
           files: this.files.map(file => file.file),
           burnDate: this.selectedTTLObjectValue,
-          password: this.selectedPassword,
+          password,
         })
         console.log('create note', noteId, encodedKey)
         this.$router.push({
           name: 'note-created',
-          params: {noteId: noteId, notePwd: this.selectedPassword ? '' : encodedKey},
-          hash: this.selectedPassword ? '' : `#${encodedKey}`
+          params: {noteId: noteId, notePwd: password},
+          hash: `#${password}`
         })
       } catch (e) {
         this.noteCreatingError = e.response && e.response.data && e.response.data.message || e.message

@@ -187,6 +187,7 @@
     getNote,
     getNoteStatus,
   } from '../utils'
+  import axios from 'axios'
 
   export default {
     name: 'Home',
@@ -198,6 +199,7 @@
         noteHash: '',
         noteLoading: false,
         noteData: null,
+        noteDataEncrypted: null,
         noteError: null,
         noteStatusData: null,
         noteStatusError: null,
@@ -297,17 +299,22 @@
         this.noteLoading = true
 
         try {
-          const hash = this.noteHash
-          let key
-          if (hash) {
-            key = await secrets.urldecodeKey(hash)
-          } else {
-            key = await secrets.createKeyFromPassword(this.notePassword)
-          }
+          let hash
 
+          if (this.noteHash) {
+            hash = this.noteHash
+          } else {
+            hash = this.notePassword
+          }
           console.log('urlencodedKey', hash)
-          console.log('key', key)
-          const data = await getNote({id: this.noteId, key })
+          if (!this.noteDataEncrypted) {
+            const response = await axios.get(`/api/note/${this.noteId}`)
+            this.noteDataEncrypted = response.data
+          }
+          const data = await getNote({
+            password: hash,
+            encryptedNote: this.noteDataEncrypted
+          })
           console.log('getnote', data)
           this.noteData = data
         } catch (e) {
