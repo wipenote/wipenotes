@@ -869,11 +869,11 @@ button {
   }
 
   .note-confirm-modal__button {
-    min-width: 200px;
+    // min-width: 200px;
     margin-top: 0 !important;
 
     @media (min-width: 576px) {
-      min-width: 200px;
+      // min-width: 200px;
     }
     @media (max-width: 490px) {
       width: 100%;
