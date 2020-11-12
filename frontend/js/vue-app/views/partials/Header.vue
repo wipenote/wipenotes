@@ -2,7 +2,7 @@
   <header>
 
     <nav class="container d-lg-none">
-      <h1 class="header__logo" src="images/logo.svg" alt="Logo">WipeNote</h1>
+      <div class="header__logo">WipeNote</div>
 			<div class="button_container toggle">
 				<span class="top"></span>
 				<span class="middle"></span>
@@ -21,8 +21,8 @@
                 </div>
                 <div class="footer__col-middle">
                   <h3 class="footer__title">Donate (btc)</h3>
-                  <button class="footer__copy">
-                    <span class="footer__copy-icon"><img src="images/copy.svg" alt="copy"></span>
+                  <button class="footer__copy" @click="copyLink">
+                    <span class="footer__copy-icon"><img src="/images/copy.svg" alt="copy"></span>
                     1BQ9qza7fn9snSCyJQB3Z<br>cN46biBtkt4ee
                   </button>
                 </div>
@@ -44,7 +44,7 @@
         <!-- <img class="header__logo" src="/assets/images/logo.svg" alt="Logo" class="logo"> -->
         <h1 class="header__logo logo">WipeNote</h1>
         <div class="header__right">
-          <img class="header__logo-github" src="../../assets/images/github.svg" alt="github">
+          <img class="header__logo-github" src="/assets/images/github.svg" alt="github">
           <a class="header__trust" href="#">Why can you trust us?</a>
         </div>
       </div>
@@ -57,6 +57,17 @@
   export default {
     name: 'Header',
     props: {
+    },
+    data() {
+      return {
+        bitcoinAddress: '1BQ9qza7fn9snSCyJQB3ZcN46biBtkt4ee'
+      }
+    },
+    methods: {
+      copyLink() {
+        console.log('asdasd')
+        this.$clipboard(this.bitcoinAddress)
+      },
     }
   }
 </script>

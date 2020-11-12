@@ -24,13 +24,18 @@
 {% endblock %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+
 <script>
   $('.toggle').on('click', function() {
     $('.button_container').toggleClass('active-btn');
     $('#overlay').toggleClass('open');
     $('.logo-panel').toggleClass('logo-open');
     $('#top-panel-mob').toggleClass('panel-open');
-  }); 
+  });
+
+  var copyButton = new ClipboardJS('.footer__copy');
+
 </script>
 
 </body>

@@ -23,14 +23,16 @@
               :readonly="!isNoteVisible"
               autofocus />
 
-            <div>
+            <div class="form__file-list">
               <input style="display: none" type="file" ref="files" @change="onFileChange"/>
               <button v-for="file in files" class="form__filename">
                 <span class="form__filename-icon">
                   <img src="/assets/images/attachment.svg" alt="attachment">
                 </span>
+                <span class="form__filename-title">
                   {{file.file.name}}
-                  <span class="form__filename-delete" @click="deleteAttachment(file)">x</span>
+                </span>
+                <span class="form__filename-delete" @click="deleteAttachment(file)">x</span>
               </button>
             </div>
           </div>
@@ -97,10 +99,10 @@
 
         <div class="form__bottom-right form__bottom-right_mobile">
           <button @click="openMobileNoteSettings" class="button__attachment button__attachment_mobile">
-            <img src="assets/images/settings.svg" alt="settings">
+            <img src="/assets/images/settings.svg" alt="settings">
           </button>
           <button @click="toggleNoteVisibility" class="button__attachment button__attachment_mobile">
-            <img src="assets/images/eye.svg" alt="open the password">
+            <img src="/assets/images/eye.svg" alt="open the password">
           </button>
         </div>
       </div>
@@ -135,7 +137,7 @@
 
       <div class="modal__wrapper">
         <h2 class="modal__wrapper-title">Note settings</h2>
-        <b-button class="modal__close" @click="$bvModal.hide('confirm-modal')">
+        <b-button class="modal__close" @click="closeMobileNoteSettings">
           <img src="assets/images/cross.svg" alt="close">
         </b-button>
       </div>
@@ -197,7 +199,7 @@ export default {
       postFormData: new FormData(),
       ttlList: [
         { value: 'immediately', label: 'Delete immediately'},
-        { value: '30_sec', label: '30 seconds'},
+        // { value: '30_sec', label: '30 seconds'},
         { value: '15_min', label: '15 minutes'},
         { value: '30_min', label: '30 minutes'},
         { value: '1_hour', label: '1 hour'},
@@ -340,7 +342,7 @@ export default {
       this.isVisibleMobileSettingsModal = true
     },
     closeMobileNoteSettings() {
-      this.isVisibleMobileSettingsModal = true
+      this.isVisibleMobileSettingsModal = false
     }
   }
 }

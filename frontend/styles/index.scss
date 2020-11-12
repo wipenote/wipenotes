@@ -283,6 +283,8 @@ body {
           justify-content: space-between;
           flex: 1;
           padding: 0 40px 22px;
+          max-width: 100%;
+
           .textarea {
             color: #000;
             font-size: 18px;
@@ -295,7 +297,7 @@ body {
             // resize: none;
             outline: none;
             position: relative;
-            overflow: hidden;
+            //overflow: hidden;
             transition: .3s;
             resize: none;
             flex: 1;
@@ -324,6 +326,10 @@ body {
             //   background-color: $grey;
             // }
           }
+          .form__file-list {
+            display: flex;
+            flex-wrap: wrap;
+          }
           .form__filename {
             background-color: #f7f7f7;
             border: 0;
@@ -334,9 +340,20 @@ body {
             line-height: 16px;
             margin-top: 36px;
             position: relative;
+            display: flex;
+            align-items: center;
+            max-width: 400px;
 
             & + .form__filename {
               margin-left: 10px;
+            }
+
+            &-title {
+              max-width: 100%;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              width: 100%;
+              display: inline-block;
             }
 
             &-icon {
