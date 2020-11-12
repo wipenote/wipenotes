@@ -6,7 +6,6 @@
         <div class="form__top">
           <div class="textarea__wrapper">
             <textarea
-              onkeyup="textAreaAdjust(this)"
               v-if="isNoteVisible"
               v-model="message"
               class="textarea"

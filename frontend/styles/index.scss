@@ -298,7 +298,7 @@ body {
             overflow: hidden;
             transition: .3s;
             resize: none;
-            // flex: 1;
+            flex: 1;
             &::placeholder {
               color: $grey;
             }
