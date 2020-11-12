@@ -299,15 +299,20 @@
         this.noteLoading = true
 
         try {
-          const hash = this.noteHash
+          let hash
 
+          if (this.noteHash) {
+            hash = this.noteHash
+          } else {
+            hash = this.notePassword
+          }
           console.log('urlencodedKey', hash)
           if (!this.noteDataEncrypted) {
             const response = await axios.get(`/api/note/${this.noteId}`)
             this.noteDataEncrypted = response.data
           }
           const data = await getNote({
-            password: this.noteHash,
+            password: hash,
             encryptedNote: this.noteDataEncrypted
           })
           console.log('getnote', data)

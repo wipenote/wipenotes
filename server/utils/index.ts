@@ -1,3 +1,6 @@
+import * as generator from "generate-password";
+import {NoteId} from "../database";
+
 export class HandledError {
   code: number
   name: string
@@ -26,4 +29,11 @@ export function errorJSON(error, res) {
     .status(code)
     .json({message})
 
+}
+
+export function generateId() {
+  return generator.generate({
+    length: 8,
+    numbers: true
+  }) as NoteId
 }

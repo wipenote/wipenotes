@@ -6,7 +6,7 @@ import {logger} from '../logger'
 
 import {NoteId, LogId, Note, NoteOptions, Log, Database} from './types'
 import _ from 'lodash'
-import {HandledError} from "../utils";
+import {generateId, HandledError} from "../utils";
 
 /**
  * Database implementation with Redis as backend.
@@ -32,10 +32,13 @@ export class RedisDatabase implements Database {
   }
 
   async storeNote(note: Note) {
-    const id = generator.generate({
-      length: 8,
-      numbers: true
-    }) as NoteId
+    let id = generateId()
+
+    const doesExist = await this.redis.exists(`note-${id}`)
+    if (doesExist) {
+      id = generateId()
+    }
+
     const jsonified = JSON.stringify(note)
     logger.debug(`Storing note ${id} in Redis under note-${id}`)
     if (note.burnTime) {
