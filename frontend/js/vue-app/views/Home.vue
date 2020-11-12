@@ -229,6 +229,12 @@ export default {
       return this.isNoteVisible ? this.message : new Array(this.message.length).fill('*').join('')
     }
   },
+  watch: {
+    selectedPassword(newVal) {
+      let re = /[^A-Za-z0-9]/gi;
+      this.$set(this, 'selectedPassword', newVal.replace(re, ''));
+    }
+  },
   methods: {
     onClickTTLObject(index) {
       this.selectedTTLIndex = index
