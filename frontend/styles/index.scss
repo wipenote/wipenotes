@@ -437,11 +437,16 @@ body {
             display: flex;
             align-items: center;
 
+            &_disabled {
+              background-color: rgba(239, 239, 239, 0.3);
+            }
+
             &__input {
               border: none;
               outline: none;
               height: 100%;
               padding-left: 18px;
+              background: transparent;
             }
 
             &-icon {
@@ -751,6 +756,10 @@ body {
   outline: none;
   min-width: 285px;
   flex-wrap: wrap;
+
+  &_disabled {
+    background-color: rgba(239, 239, 239, 0.3);
+  }
 
   &-current {
     display: flex;

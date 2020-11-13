@@ -66,7 +66,7 @@
           </button>
         </div>
         <div class="form__bottom-right form__bottom-right_desktop">
-          <div class="ttl-selector">
+          <div class="ttl-selector ttl-selector_disabled">
             <div class="ttl-selector-current">
               <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
               <span class="ttl-selector-text">
@@ -77,7 +77,7 @@
           </div>
           <form
             id="field-password-input-wrapper"
-            class="field__password"
+            class="field__password field__password_disabled"
             @submit.prevent="onPasswordEnter"
           >
             <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
