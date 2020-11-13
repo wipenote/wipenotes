@@ -93,12 +93,17 @@ const getNote = async ({password, encryptedNote}) => {
       console.error(e)
     }
     console.log('filedata', fileData, metadata)
+    const isImage = metadata.type.startsWith('image/')
     files.push({
-      data: fileData,
-      metadata,
+      file: {
+        data: fileData,
+        metadata,
+      },
+      isImage: isImage,
+      imageData: isImage ? await getFileBufferDataUrl(fileData, metadata): ''
     })
   }
-  console.log('decrypted', decryptedMessage)
+  console.log('decrypted', decryptedMessage, files)
   return {
     message: decryptedMessage,
     files,
@@ -111,10 +116,35 @@ const getNoteStatus = async ({id}) => {
   return data
 }
 
+function getFileBufferDataUrl(file, metadata) {
+  const arrayBufferView = new Uint8Array(file);
+  const blob = new Blob([arrayBufferView.buffer], metadata);
+  const urlCreator = window.URL || window.webkitURL;
+  return urlCreator.createObjectURL( blob );
+}
+function getFileDataURL(file) {
+  if (!file) {
+    return
+  }
+  
+  console.log(file)
+  const reader = new FileReader();
+  
+  const contentPromise = new Promise((resolve, reject) => {
+    reader.onloadend = function () {
+      resolve(reader.result);
+    }
+  })
+  
+  reader.readAsDataURL(file);
+  
+  return contentPromise
+}
+
 export {
   secrets,
   createNote,
   getNote,
   getNoteStatus,
-  
+  getFileDataURL,
 }

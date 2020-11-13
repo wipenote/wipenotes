@@ -91,25 +91,6 @@
         console.log('this.$refs.files.files', this.$refs.files.files)
         this.files = this.$refs.files.files;
       },
-      getFileDataURL(file) {
-        if (!file) {
-          return
-        }
-
-        const reader = new FileReader();
-
-        const contentPromise = new Promise((resolve, reject) => {
-          reader.onloadend = function () {
-            resolve(reader.result);
-          }
-        })
-
-        if (file) {
-          reader.readAsDataURL(file);
-        }
-
-        return contentPromise
-      },
       onClickAddAttachment() {
         this.$refs.files.click()
       },

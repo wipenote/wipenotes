@@ -26,10 +26,15 @@
                 class="form__filename"
                 @click="downloadFile(file)"
               >
-                <span class="form__filename-icon">
-                  <img src="/assets/images/attachment.svg" alt="attachment">
+                <span class="form__filename-icon-wrapper">
+                  <img v-if="!file.isImage"
+                       class="form__filename-icon"
+                       src="/assets/images/attachment.svg"
+                       alt="attachment"
+                  >
+                  <img v-else class="form__filename-icon-image" :src="file.imageData" alt="">
                 </span>
-                {{file.metadata.name}}
+                {{file.file.metadata.name}}
               </button>
             </div>
 
@@ -38,8 +43,8 @@
                 v-for="filename in fileStatuses"
                 class="form__filename"
               >
-                <span class="form__filename-icon">
-                  <img src="/assets/images/attachment.svg" alt="attachment">
+                <span class="form__filename-icon-wrapper">
+                  <img class="form__filename-icon" src="/assets/images/attachment.svg" alt="attachment">
                 </span>
                 {{filename}}
               </button>
@@ -266,25 +271,6 @@
       hideConfirmModal() {
         this.isVisibleConfirmModal = false
       },
-      getFileDataURL(file) {
-        if (!file) {
-          return
-        }
-
-        const reader = new FileReader();
-
-        const contentPromise = new Promise((resolve, reject) => {
-          reader.onloadend = function () {
-            resolve(reader.result);
-          }
-        })
-
-        if (file) {
-          reader.readAsDataURL(file);
-        }
-
-        return contentPromise
-      },
       createNewNote() {
         this.$router.push({name: 'home'})
       },
@@ -321,12 +307,11 @@
             const response = await axios.get(`/api/note/${this.noteId}`)
             this.noteDataEncrypted = response.data
           }
-          const data = await getNote({
+          this.noteData = await getNote({
             password: hash,
             encryptedNote: this.noteDataEncrypted
           })
-          console.log('getnote', data)
-          this.noteData = data
+          console.log('getnote', this.noteData)
         } catch (e) {
           this.noteLoading = false
           console.error(e.message)
@@ -357,13 +342,14 @@
         this.hideConfirmModal()
       },
       downloadFile(file) {
-        var blob = new Blob([file.data], file.metadata);
+        // var blob = new Blob([file.data], file.metadata);
         // var objectUrl = URL.createObjectURL(blob);
         // window.open(objectUrl);
 
         const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = file.metadata.name
+        // link.href = window.URL.createObjectURL(blob);
+        link.href = file.imageData;
+        link.download = file.file.metadata.name
         link.click();
       },
       async showNote() {

@@ -1,8 +1,11 @@
 <template>
   <div class="form">
-    <div class="window">
+    <div
+      class="window"
+      @dragenter.prevent.stop="dragging = true"
+      @dragover.prevent.stop="dragging = true"
+    >
       <div class="form__wrapper-img">
-
         <div class="form__top">
           <div class="textarea__wrapper">
             <textarea
@@ -26,8 +29,9 @@
             <div class="form__file-list">
               <input style="display: none" type="file" ref="files" @change="onFileChange"/>
               <button v-for="file in files" class="form__filename">
-                <span class="form__filename-icon">
-                  <img src="/assets/images/attachment.svg" alt="attachment">
+                <span class="form__filename-icon-wrapper">
+                  <img class="form__filename-icon" v-if="!file.isImage" src="/assets/images/attachment.svg" alt="attachment">
+                  <img class="form__filename-icon-image" v-else :src="file.imageData" alt="">
                 </span>
                 <span class="form__filename-title">
                   {{file.file.name}}
@@ -111,6 +115,14 @@
         {{noteCreatingError}}
       </div>
 
+      <div
+        v-if="dragging"
+        class="drag-overlay"
+        @drop.prevent="onDropFile"
+        @dragleave="dragging=false"
+      >
+        Drop files here to upload
+      </div>
     </div>
     <button
       @click="createNote"
@@ -180,12 +192,12 @@
 </template>
 
 <script>
-import {
-  secrets,
-  createNote,
-  getNote,
-  getNoteStatus,
-} from '../utils'
+  import {
+    secrets,
+    createNote,
+    getNote,
+    getNoteStatus, getFileDataURL,
+  } from '../utils'
 import * as generator from 'generate-password'
 
 export default {
@@ -214,6 +226,7 @@ export default {
       isShowAttachmentPopover: false,
       attachmentPopoverText: '',
       isVisibleMobileSettingsModal: false,
+      dragging: false,
     }
   },
   computed: {
@@ -236,6 +249,20 @@ export default {
     }
   },
   methods: {
+    onDragOver(e) {
+      console.log('dragover')
+    },
+    onDropFile(e) {
+      this.dragging = false
+      let droppedFiles = e.dataTransfer.files;
+      console.log(e.dataTransfer.files)
+      if(!droppedFiles || !droppedFiles.length) return;
+      this.addFileAttachments(e.dataTransfer.files)
+      // this tip, convert FileList to array, credit: https://www.smashingmagazine.com/2018/01/drag-drop-file-uploader-vanilla-js/
+      // ([...droppedFiles]).forEach(f => {
+      //   this.files.push(f);
+      // });
+    },
     onClickTTLObject(index) {
       this.selectedTTLIndex = index
     },
@@ -250,25 +277,6 @@ export default {
       console.log('this.$refs.files.files', this.$refs.files.files)
       this.files = this.$refs.files.files;
     },
-    getFileDataURL(file) {
-      if (!file) {
-        return
-      }
-
-      const reader = new FileReader();
-
-      const contentPromise = new Promise((resolve, reject) => {
-        reader.onloadend = function () {
-          resolve(reader.result);
-        }
-      })
-
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-
-      return contentPromise
-    },
     showAttachmentPopover(text) {
       this.attachmentPopoverText = text
       this.isShowAttachmentPopover = true
@@ -277,9 +285,12 @@ export default {
       this.isShowAttachmentPopover = false
     },
     async onFileChange(event) {
-      console.log(event.target.files)
+      await this.addFileAttachments(event.target.files)
+    },
+    async addFileAttachments(files) {
+      console.log(files)
 
-      for(const file of event.target.files){
+      for (const file of files){
         if (file.size > 1024 * 1024 * 5) {
           this.showAttachmentPopover()
           return
@@ -292,7 +303,7 @@ export default {
         this.files.push({
           file,
           isImage: isImage,
-          imageData: isImage ? await this.getFileDataURL(file): ''
+          imageData: isImage ? await getFileDataURL(file): ''
         })
 
       }
