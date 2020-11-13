@@ -9,7 +9,7 @@
           >
             <img src="/assets/images/copy.svg" alt="copy">
           </span>
-          <router-link :to="{ path: relativeLinkUrl }">
+          <router-link :to="{ path: relativeLinkUrl }" target="_blank">
             {{linkUrl}}
           </router-link>
 

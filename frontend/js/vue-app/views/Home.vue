@@ -163,8 +163,8 @@
         <div class="ttl-selector-current">
           <span class="ttl-selector-icon"><img src="/assets/images/timer-purple.svg" alt="attachment"></span>
           <span class="ttl-selector-text">
-                {{selectedTTLObjectLabel}}
-              </span>
+            {{selectedTTLObjectLabel}}
+          </span>
           <span><img class="" src="/assets/images/arrow-white.svg" alt="arrow"></span>
         </div>
         <ul class="ttl-selector__list">
@@ -196,7 +196,7 @@
     secrets,
     createNote,
     getNote,
-    getNoteStatus, getFileDataURL,
+    getNoteStatus, getFileDataURL, getTTLList,
   } from '../utils'
 import * as generator from 'generate-password'
 
@@ -209,15 +209,7 @@ export default {
       files: [],
       isNoteVisible: true,
       postFormData: new FormData(),
-      ttlList: [
-        { value: 'immediately', label: 'Delete immediately'},
-        // { value: '30_sec', label: '30 seconds'},
-        { value: '15_min', label: '15 minutes'},
-        { value: '30_min', label: '30 minutes'},
-        { value: '1_hour', label: '1 hour'},
-        { value: '3_hours', label: '3 hours'},
-        { value: '24_hours', label: '24 hours'}
-      ],
+      ttlList: getTTLList(),
       selectedTTLIndex: 0,
       selectedPassword: '',
       isTTLSelectorOpen: false,

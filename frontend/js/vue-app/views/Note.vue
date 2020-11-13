@@ -66,11 +66,15 @@
           </button>
         </div>
         <div class="form__bottom-right form__bottom-right_desktop">
-          <button class="ttl-selector" disabled>
-            <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
-            <span class="ttl-selector-text">Delete immediately</span>
-            <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
-          </button>
+          <div class="ttl-selector">
+            <div class="ttl-selector-current">
+              <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
+              <span class="ttl-selector-text">
+                {{currentTTLLabel}}
+              </span>
+              <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
+            </div>
+          </div>
           <form
             id="field-password-input-wrapper"
             class="field__password"
@@ -80,7 +84,7 @@
             <input
               id="field-password-input"
               class="field__password__input"
-              type="text"
+              type="password"
               v-model="notePassword"
               placeholder="Enter password"
               @focus="onPasswordFieldFocus"
@@ -100,9 +104,6 @@
         </div>
 
         <div class="form__bottom-right form__bottom-right_mobile">
-          <button @click="openMobileNoteSettings" class="button__attachment button__attachment_mobile">
-            <img src="/assets/images/settings.svg" alt="settings">
-          </button>
           <button @click="onClickShowNote" class="button__attachment button__attachment_mobile">
             <img src="/assets/images/eye.svg" alt="open the password">
           </button>
@@ -199,7 +200,7 @@
     secrets,
     createNote,
     getNote,
-    getNoteStatus,
+    getNoteStatus, getTTLList,
   } from '../utils'
   import axios from 'axios'
 
@@ -219,7 +220,7 @@
         noteStatusError: null,
         noteStatusLoading: true,
         notePassword: '',
-        selectedTTL: '',
+        ttlList: getTTLList(),
         isVisibleConfirmModal: true,
         isNoteOpened: false,
         isShowPasswordPopover: false,
@@ -233,6 +234,7 @@
 
       this.noteId = this.$route.params.noteId
       this.noteHash = this.$route.hash ? this.$route.hash.replace('#', '') : ''
+      this.notePassword = this.noteHash
       this.loadNoteStatus()
     },
     computed: {
@@ -248,6 +250,15 @@
         }
 
         return new Array(statusData.messageLength).fill('*').join('')
+      },
+      currentTTLLabel() {
+        if (!this.noteStatusData || !this.noteStatusData.burnDate) {
+          return ''
+        }
+
+        const ttlItem = this.ttlList.find(ttl => ttl.value === this.noteStatusData.burnDate)
+
+        return ttlItem && ttlItem.label
       },
       fileStatuses() {
         return this.noteStatusData && this.noteStatusData.files ?

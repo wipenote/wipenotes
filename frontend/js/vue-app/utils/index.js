@@ -122,6 +122,7 @@ function getFileBufferDataUrl(file, metadata) {
   const urlCreator = window.URL || window.webkitURL;
   return urlCreator.createObjectURL( blob );
 }
+
 function getFileDataURL(file) {
   if (!file) {
     return
@@ -141,10 +142,23 @@ function getFileDataURL(file) {
   return contentPromise
 }
 
+function getTTLList() {
+  return [
+    { value: 'immediately', label: 'Delete immediately'},
+    // { value: '30_sec', label: '30 seconds'},
+    { value: '15_min', label: '15 minutes'},
+    { value: '30_min', label: '30 minutes'},
+    { value: '1_hour', label: '1 hour'},
+    { value: '3_hours', label: '3 hours'},
+    { value: '24_hours', label: '24 hours'}
+  ]
+}
+
 export {
   secrets,
   createNote,
   getNote,
   getNoteStatus,
   getFileDataURL,
+  getTTLList,
 }

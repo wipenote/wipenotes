@@ -67,7 +67,7 @@ export class RedisDatabase implements Database {
 
     const keyValue = await this.redis.get(`note-${noteId}`)
 
-    const note = JSON.parse(keyValue || '')
+    const note: Note = JSON.parse(keyValue || '')
 
     if (!note) {
       return {
@@ -84,6 +84,7 @@ export class RedisDatabase implements Database {
       hasBurned: false,
       files: note.files.length,
       messageLength: note.messageLength,
+      burnDate: note.burnDateValue,
     }
   }
 
