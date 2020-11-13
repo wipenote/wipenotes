@@ -26,10 +26,16 @@ const createNote = async ({
   files,
   burnDate,
   }) => {
+  console.log('msg', message, 'pwd', password, 'files', files, 'burnD', burnDate)
   const key = await secrets.createKeyFromPassword(password)
+  console.log('encryptScheme', secrets.getEncryptionScheme())
   console.log('key', key)
+  console.log('encrypt msg', message ? await secrets.encryptMessage(message, key) : null)
+  console.log('encrypt files', await Promise.all(
+    files.map(file => secrets.encryptFile(file, key))
+  ))
   const note = {
-    encryptedMessage: await secrets.encryptMessage(message, key),
+    encryptedMessage: message ? await secrets.encryptMessage(message, key) : null,
     messageLength: message.length,
     files: await Promise.all(
       files.map(file => secrets.encryptFile(file, key))
@@ -50,17 +56,21 @@ const createNote = async ({
 
 const getNote = async ({password, encryptedNote}) => {
   let key = await secrets.createKeyFromPassword(password)
-  encryptedNote.encryptedMessage.data = new Uint8Array(encryptedNote.encryptedMessage.data).buffer
-  encryptedNote.encryptedMessage.IV = new Uint8Array(encryptedNote.encryptedMessage.IV)
   
   let decryptedMessage = ''
-  try {
-    decryptedMessage = await secrets.decryptMessage(key, {
-      encryptedMessage: encryptedNote.encryptedMessage.data,
-      IV: encryptedNote.encryptedMessage.IV,
-    })
-  } catch (e) {
-    throw new Error('Password is invalid. Please, try again')
+  
+  if (encryptedNote.encryptedMessage) {
+    encryptedNote.encryptedMessage.data = new Uint8Array(encryptedNote.encryptedMessage.data).buffer
+    encryptedNote.encryptedMessage.IV = new Uint8Array(encryptedNote.encryptedMessage.IV)
+  
+    try {
+      decryptedMessage = await secrets.decryptMessage(key, {
+        encryptedMessage: encryptedNote.encryptedMessage.data,
+        IV: encryptedNote.encryptedMessage.IV,
+      })
+    } catch (e) {
+      throw new Error('Password is invalid. Please, try again')
+    }
   }
   
   const files = []

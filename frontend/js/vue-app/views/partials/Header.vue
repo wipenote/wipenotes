@@ -15,7 +15,6 @@
 						<div class="container">
               <!-- <div class="row"> -->
                 <div class="footer__col">
-                  <h3 class="footer__title">Why can you trust us?</h3>
                   <a class="footer__link" href="#">Github</a>
                   <a class="footer__link" href="#">About us</a>
                 </div>
@@ -45,7 +44,6 @@
         <h1 class="header__logo logo">WipeNote</h1>
         <div class="header__right">
           <img class="header__logo-github" src="/assets/images/github.svg" alt="github">
-          <a class="header__trust" href="#">Why can you trust us?</a>
         </div>
       </div>
     </div>

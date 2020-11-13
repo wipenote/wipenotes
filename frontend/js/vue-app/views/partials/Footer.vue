@@ -3,7 +3,6 @@
     <div class="container">
       <div class="row">
         <div class="footer__col col-md-3">
-          <h3 class="footer__title">Why can you trust us?</h3>
           <a class="footer__link" href="#">Github</a>
           <a class="footer__link" href="#">About us</a>
         </div>

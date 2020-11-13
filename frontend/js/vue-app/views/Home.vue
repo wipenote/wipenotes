@@ -334,6 +334,7 @@ export default {
           hash: `#${password}`
         })
       } catch (e) {
+        console.error(e)
         this.noteCreatingError = e.response && e.response.data && e.response.data.message || e.message
       }
       this.isNoteCreating = false
