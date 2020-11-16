@@ -349,7 +349,7 @@ export default {
       this.noteCreatingError = ''
 
       if (!this.files.length && !this.message) {
-        this.noteCreatingError = 'Please, create attachment or make message'
+        this.noteCreatingError = 'Please, attach a file or create a message'
         return
       }
 
