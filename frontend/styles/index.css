@@ -289,6 +289,8 @@ body .header__row {
           justify-content: space-between;
   margin-bottom: 34px;
   padding-top: 28px;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 body .header__row .header__logo {
@@ -302,7 +304,6 @@ body .header__row .header__right {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  width: 220px;
   max-width: 100%;
 }
 
@@ -331,6 +332,7 @@ body .window {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  position: relative;
 }
 
 body .window .form__wrapper-img {
@@ -358,6 +360,7 @@ body .window .form__wrapper-img .form__top {
       -ms-flex: 1;
           flex: 1;
   padding: 0 40px 22px;
+  max-width: 100%;
 }
 
 body .window .form__wrapper-img .form__top .textarea {
@@ -371,7 +374,6 @@ body .window .form__wrapper-img .form__top .textarea {
   width: 100%;
   outline: none;
   position: relative;
-  overflow: hidden;
   -webkit-transition: .3s;
   transition: .3s;
   resize: none;
@@ -418,6 +420,14 @@ body .window .form__wrapper-img .form__top .textarea__wrapper {
   padding-right: 10px;
 }
 
+body .window .form__wrapper-img .form__top .form__file-list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
 body .window .form__wrapper-img .form__top .form__filename {
   background-color: #f7f7f7;
   border: 0;
@@ -428,19 +438,39 @@ body .window .form__wrapper-img .form__top .form__filename {
   line-height: 16px;
   margin-top: 36px;
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  max-width: 400px;
 }
 
 body .window .form__wrapper-img .form__top .form__filename + .form__filename {
   margin-left: 10px;
 }
 
-body .window .form__wrapper-img .form__top .form__filename-icon {
+body .window .form__wrapper-img .form__top .form__filename-title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: inline-block;
+}
+
+body .window .form__wrapper-img .form__top .form__filename-icon-wrapper {
   margin-right: 8px;
 }
 
-body .window .form__wrapper-img .form__top .form__filename-icon img {
+body .window .form__wrapper-img .form__top .form__filename-icon {
   width: 14px;
   margin-top: -2px;
+}
+
+body .window .form__wrapper-img .form__top .form__filename-icon-image {
+  max-width: 50px;
+  max-height: 40px;
 }
 
 body .window .form__wrapper-img .form__top .form__filename-delete {
@@ -536,11 +566,16 @@ body .window .form__bottom-right .field__password {
           align-items: center;
 }
 
+body .window .form__bottom-right .field__password_disabled {
+  background-color: rgba(239, 239, 239, 0.3);
+}
+
 body .window .form__bottom-right .field__password__input {
   border: none;
   outline: none;
   height: 100%;
   padding-left: 18px;
+  background: transparent;
 }
 
 body .window .form__bottom-right .field__password-icon img {
@@ -691,7 +726,7 @@ body .modal.modal-settings .modal-dialog .modal-content .modal-body .ttl-selecto
 body .modal.modal-settings .modal-dialog .modal-content .modal-body .ttl-selector-current .ttl-selector-text {
   color: #ffffff;
   margin-left: 0;
-  margin-right: auto;
+  margin-right: 18px;
 }
 
 body .modal.modal-settings .modal-dialog .modal-content .modal-body .field__password {
@@ -911,6 +946,10 @@ body .footer__col-middle .footer__copy-icon img {
   min-width: 285px;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+}
+
+.ttl-selector_disabled {
+  background-color: rgba(239, 239, 239, 0.3);
 }
 
 .ttl-selector-current {
@@ -1143,5 +1182,26 @@ button:focus {
   width: 1rem;
   height: 1rem;
   border-width: .2em;
+}
+
+.drag-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(46, 46, 46, 0.5);
+  top: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-transition: all .35s;
+  transition: all .35s;
+  border-radius: 20px;
+  color: #fff;
 }
 /*# sourceMappingURL=index.css.map */
