@@ -114,7 +114,16 @@
         {{errorText}}
       </div>
     </div>
-    <button @click="createNewNote" class="button__submit" type="submit">Create a new note</button>
+    <button @click="createNewNote" class="button__submit" type="submit">
+      Create a new note
+    </button>
+    <button
+      @click="replyNote"
+      class="button__submit button__submit_transparent"
+      type="submit"
+      :disabled="!isNoteOpened">
+      Reply note
+    </button>
 
     <b-modal
       id="confirm-modal"
@@ -394,6 +403,22 @@
       toggleNoteVisibility() {
         this.isNoteVisible = !this.isNoteVisible
       },
+      replyNote() {
+        if (this.isNoteOpened) {
+          let newMessage = this.noteData.message
+            .split('\n')
+            .map(line => `> ${line}`)
+            .join('\n')
+
+          newMessage += '\n'
+
+          this.$router.push({
+            name: 'home',
+            params: {replyMessage: newMessage}
+          })
+
+        }
+      }
     }
   }
 </script>

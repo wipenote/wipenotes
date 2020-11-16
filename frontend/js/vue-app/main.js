@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { Plugin } from 'vue-fragment';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import { BootstrapVue, IconsPlugin, ToastPlugin } from 'bootstrap-vue'
 import Clipboard from 'v-clipboard'
 
 import App from './App.vue'
@@ -8,8 +8,9 @@ import App from './App.vue'
 import router from './router'
 // import './assets/styles/index.scss'
 
-Vue.use(Plugin);
+Vue.use(Plugin)
 Vue.use(BootstrapVue)
+Vue.use(ToastPlugin)
 Vue.use(IconsPlugin)
 Vue.use(Clipboard)
 

@@ -24,6 +24,17 @@
       </div>
     </div>
     <button @click="createNewNote" class="button__submit" type="submit">Create a new note</button>
+    <b-toast id="my-toast" variant="warning" solid>
+      <template #toast-title>
+        <div class="d-flex flex-grow-1 align-items-baseline">
+          <b-img blank blank-color="#ff5555" class="mr-2" width="12" height="12"></b-img>
+          <strong class="mr-auto">Notice!</strong>
+          <small class="text-muted mr-2">42 seconds ago</small>
+        </div>
+      </template>
+      This is the content of the toast.
+      It is short and to the point.
+    </b-toast>
   </fragment>
 </template>
 
@@ -110,6 +121,15 @@
       },
       copyLink() {
         this.$clipboard(this.linkUrl)
+        this.$bvToast.toast('Link has been copied', {
+          // title: `Copied successfully`,
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 3000,
+        })
+
+        // this.$bvToast.show('my-toast')
+
       },
       shareFacebook() {
         const shareLink = encodeURIComponent(this.linkUrl)

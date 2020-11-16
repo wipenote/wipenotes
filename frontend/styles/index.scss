@@ -2,6 +2,8 @@ $purple : #412EA0;
 $brightPurple : #7051FF;
 $grey : #E2DDDD;
 
+@import 'toast';
+
 @font-face {
   font-family: Gilroy;
   src: url('../fonts/Gilroy-Medium.woff2') format('woff2'),
@@ -633,6 +635,15 @@ body {
     border: 0;
     padding: 18px 39px;
     margin-top: 36px;
+
+    &_transparent {
+      background: transparent;
+      color: #7051FF;
+      border: 2px solid #7051FF;
+      margin-left: 15px;
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
   }
   .footer {
     background-color: #ededed;
@@ -976,3 +987,4 @@ button {
   color: #fff;
 
 }
+

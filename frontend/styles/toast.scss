@@ -1,0 +1,341 @@
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black:    #000 !default;
+
+$blue:    #007bff !default;
+$indigo:  #6610f2 !default;
+$purple:  #6f42c1 !default;
+$pink:    #e83e8c !default;
+$red:     #dc3545 !default;
+$orange:  #fd7e14 !default;
+$yellow:  #ffc107 !default;
+$green:   #28a745 !default;
+$teal:    #20c997 !default;
+$cyan:    #17a2b8 !default;
+
+$primary:       $blue !default;
+$secondary:     $gray-600 !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $yellow !default;
+$danger:        $red !default;
+$light:         $gray-100 !default;
+$dark:          $gray-800 !default;
+
+$theme-colors: () !default;
+$theme-colors: map-merge(
+                (
+                        "primary":    $primary,
+                        "secondary":  $secondary,
+                        "success":    $success,
+                        "info":       $info,
+                        "warning":    $warning,
+                        "danger":     $danger,
+                        "light":      $light,
+                        "dark":       $dark
+                ),
+                $theme-colors
+);
+
+$enable-rounded:                              true !default;
+
+@mixin border-radius($radius: $border-radius, $fallback-border-radius: false) {
+  @if $enable-rounded {
+    border-radius: valid-radius($radius);
+  }
+  @else if $fallback-border-radius != false {
+    border-radius: $fallback-border-radius;
+  }
+}
+
+@mixin button-size($padding-y, $padding-x, $font-size, $line-height, $border-radius) {
+  padding: $padding-y $padding-x;
+  @include font-size($font-size);
+  line-height: $line-height;
+  // Manually declare to provide an override to the browser default
+  @include border-radius($border-radius, 0);
+}
+
+$alert-bg-level:                    -10 !default;
+$alert-border-level:                -9 !default;
+$alert-color-level:                 6 !default;
+
+$toast-max-width:                   350px !default;
+$toast-padding-x:                   .75rem !default;
+$toast-padding-y:                   .25rem !default;
+$toast-font-size:                   .875rem !default;
+$toast-color:                       null !default;
+$toast-background-color:            rgba(#fff, .85) !default;
+$toast-border-width:                1px !default;
+$toast-border-color:                rgba(0, 0, 0, .1) !default;
+$toast-border-radius:               .25rem !default;
+$toast-box-shadow:                  0 .25rem .75rem rgba(#000, .1) !default;
+
+$gray-600: #6c757d !default;
+$toast-header-color:                $gray-600 !default;
+$toast-header-background-color:     rgba(#fff, .85) !default;
+$toast-header-border-color:         rgba(0, 0, 0, .05) !default;
+
+// --- Toasts ---
+
+// Toaster defaults
+$b-toaster-zindex: 1100 !default;
+$b-toaster-offset-top: 0.5rem !default;
+$b-toaster-offset-bottom: $b-toaster-offset-top !default;
+$b-toaster-offset-left: $b-toaster-offset-top !default;
+$b-toaster-offset-right: $b-toaster-offset-top !default;
+
+// Default toast opacity
+// Value from 0 to 1, or 0% to 100%
+// Bootstrap default is 0.85 (extracted from the `$toast-background-color` value)
+// Bootstrap does not have this as a variable, so we add it in.
+$b-toast-background-opacity: alpha($toast-background-color) !default;
+
+// Toast variant levels wrt theme color value
+$b-toast-bg-level: $alert-bg-level !default;
+$b-toast-border-level: $alert-border-level !default;
+$b-toast-color-level: $alert-color-level !default;
+
+
+
+.b-toaster {
+  &.b-toaster-top-right,
+  &.b-toaster-top-left,
+  &.b-toaster-bottom-right,
+  &.b-toaster-bottom-left {
+    .b-toast {
+      &.b-toaster-enter-active,
+      &.b-toaster-leave-active,
+      &.b-toaster-move {
+        transition: transform 0.175s;
+      }
+
+      &.b-toaster-enter {
+      }
+
+      &.b-toaster-enter-to,
+      &.b-toaster-enter-active {
+        .toast.fade {
+          // Delay the appearance of the toast until
+          // the move transition has completed
+          transition-delay: 0.175s;
+        }
+      }
+
+      &.b-toaster-enter-to {
+      }
+
+      &.b-toaster-leave-active {
+        position: absolute;
+        transition-delay: 0.175s;
+
+        .toast.fade {
+          transition-delay: 0s;
+        }
+      }
+
+      &.b-toaster-leave-to {
+      }
+    }
+  }
+}
+
+// --- <b-toaster> custom SCSS ---
+
+// Base toaster styling
+.b-toaster {
+  z-index: 1;
+
+  .b-toaster-slot {
+    position: relative;
+    display: block;
+
+    &:empty {
+      display: none !important;
+    }
+  }
+}
+
+// Built-in toaster styling
+//  - b-toaster-top-right
+//  - b-toaster-top-left
+//  - b-toaster-top-center
+//  - b-toaster-top-full
+//  - b-toaster-bottom-right
+//  - b-toaster-bottom-left
+//  - b-toaster-bottom-center
+//  - b-toaster-bottom-full
+.b-toaster {
+  &.b-toaster-top-right,
+  &.b-toaster-top-left,
+  &.b-toaster-top-center,
+  &.b-toaster-top-full,
+  &.b-toaster-bottom-right,
+  &.b-toaster-bottom-left,
+  &.b-toaster-bottom-center,
+  &.b-toaster-bottom-full {
+    position: fixed;
+    left: $b-toaster-offset-left;
+    right: $b-toaster-offset-right;
+    margin: 0;
+    padding: 0;
+    height: 0;
+    overflow: visible;
+
+    .b-toaster-slot {
+      position: absolute;
+      max-width: $toast-max-width;
+      width: 100%; /* IE 11 fix */
+      left: 0;
+      right: 0;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  &.b-toaster-top-full,
+  &.b-toaster-bottom-full {
+    .b-toaster-slot {
+      width: 100%;
+      max-width: 100%;
+
+      .b-toast,
+      .toast {
+        // Override Bootstrap toast max-width
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  &.b-toaster-top-right,
+  &.b-toaster-top-left,
+  &.b-toaster-top-center,
+  &.b-toaster-top-full {
+    top: 0;
+
+    .b-toaster-slot {
+      top: $b-toaster-offset-top;
+    }
+  }
+
+  &.b-toaster-bottom-right,
+  &.b-toaster-bottom-left,
+  &.b-toaster-bottom-center,
+  &.b-toaster-bottom-full {
+    bottom: 0;
+
+    .b-toaster-slot {
+      bottom: $b-toaster-offset-bottom;
+    }
+  }
+
+  &.b-toaster-top-right,
+  &.b-toaster-bottom-right,
+  &.b-toaster-top-center,
+  &.b-toaster-bottom-center {
+    .b-toaster-slot {
+      margin-left: auto;
+    }
+  }
+
+  &.b-toaster-top-left,
+  &.b-toaster-bottom-left,
+  &.b-toaster-top-center,
+  &.b-toaster-bottom-center {
+    .b-toaster-slot {
+      margin-right: auto;
+    }
+  }
+}
+
+// --- <b-toast> custom SCSS ---
+
+// Toast wrapper element class (needed for list transition in toasters)
+.b-toast {
+  display: block;
+  position: relative;
+  max-width: $toast-max-width;
+  backface-visibility: hidden;
+  background-clip: padding-box;
+
+  z-index: 1;
+  @include border-radius($toast-border-radius);
+
+  .toast {
+    // Allow us to override Bootstrap's default toast opacity
+    // As they do not provide it as a variable
+    background-color: rgba($toast-background-color, $b-toast-background-opacity);
+  }
+
+  &:not(:last-child) {
+    margin-bottom: $toast-padding-x;
+  }
+
+  &.b-toast-solid {
+    .toast {
+      background-color: rgba($toast-background-color, 1);
+    }
+  }
+
+  .toast {
+    // Override default Bootstrap v4.x opacity of 0
+    // Needed for re-usable fade transition
+    opacity: 1;
+
+    &.fade:not(.show) {
+      opacity: 0;
+    }
+
+    .toast-body {
+      display: block; // Needed when we use a link as the body element
+    }
+  }
+}
+
+@mixin b-toast-variant($background, $border, $color) {
+  // Based on alert-variant mixin
+  .toast {
+    background-color: #fff;
+    border-color: rgba($border, $b-toast-background-opacity);
+    color: $color;
+
+    .toast-header {
+      color: $color;
+      background-color: rgba($background, $b-toast-background-opacity);
+      border-bottom-color: rgba($border, $b-toast-background-opacity);
+    }
+
+    // .toast-body[href] {
+    //   color: darken($color, 10%);
+    // }
+  }
+
+  &.b-toast-solid {
+    .toast {
+      background-color: rgba(lighten($background, 5%), 1);
+
+    }
+  }
+}
+
+.toast {
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #7051FF !important;
+  color: white;
+
+  button.close {
+    color: #fff;
+    text-shadow: none;
+    opacity: 1;
+  }
+}
