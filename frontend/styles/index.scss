@@ -50,11 +50,17 @@ body {
     @media (max-width: 991px) {
       position: relative;
     }
+    @media (max-width: 575px) {
+      margin-bottom: 45px;
+    }
   }
   // mobile menu
   nav {
     padding-top: 52px;
     margin-bottom: 32px;
+    @media (max-width: 575px) {
+      padding-top: 45px;
+    }
     .header__logo {
       @media (max-width: 991px) {
         font-size: 22px;
@@ -62,6 +68,7 @@ body {
       }
       @media (max-width: 575px) {
         margin-left: 9px; 
+        padding-top: 0px;
       }
     }
     .container-ham {
@@ -186,6 +193,7 @@ body {
       transition: opacity .25s ease;
       @media (max-width: 575px) {
         right: 24px;
+        top: 48px;
       }
       &:hover {
         opacity: 1;

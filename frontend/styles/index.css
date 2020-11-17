@@ -1,3 +1,144 @@
+.b-toaster.b-toaster-top-right .b-toast.b-toaster-enter-active, .b-toaster.b-toaster-top-right .b-toast.b-toaster-leave-active, .b-toaster.b-toaster-top-right .b-toast.b-toaster-move, .b-toaster.b-toaster-top-left .b-toast.b-toaster-enter-active, .b-toaster.b-toaster-top-left .b-toast.b-toaster-leave-active, .b-toaster.b-toaster-top-left .b-toast.b-toaster-move, .b-toaster.b-toaster-bottom-right .b-toast.b-toaster-enter-active, .b-toaster.b-toaster-bottom-right .b-toast.b-toaster-leave-active, .b-toaster.b-toaster-bottom-right .b-toast.b-toaster-move, .b-toaster.b-toaster-bottom-left .b-toast.b-toaster-enter-active, .b-toaster.b-toaster-bottom-left .b-toast.b-toaster-leave-active, .b-toaster.b-toaster-bottom-left .b-toast.b-toaster-move {
+  -webkit-transition: -webkit-transform 0.175s;
+  transition: -webkit-transform 0.175s;
+  transition: transform 0.175s;
+  transition: transform 0.175s, -webkit-transform 0.175s;
+}
+
+.b-toaster.b-toaster-top-right .b-toast.b-toaster-enter-to .toast.fade, .b-toaster.b-toaster-top-right .b-toast.b-toaster-enter-active .toast.fade, .b-toaster.b-toaster-top-left .b-toast.b-toaster-enter-to .toast.fade, .b-toaster.b-toaster-top-left .b-toast.b-toaster-enter-active .toast.fade, .b-toaster.b-toaster-bottom-right .b-toast.b-toaster-enter-to .toast.fade, .b-toaster.b-toaster-bottom-right .b-toast.b-toaster-enter-active .toast.fade, .b-toaster.b-toaster-bottom-left .b-toast.b-toaster-enter-to .toast.fade, .b-toaster.b-toaster-bottom-left .b-toast.b-toaster-enter-active .toast.fade {
+  -webkit-transition-delay: 0.175s;
+          transition-delay: 0.175s;
+}
+
+.b-toaster.b-toaster-top-right .b-toast.b-toaster-leave-active, .b-toaster.b-toaster-top-left .b-toast.b-toaster-leave-active, .b-toaster.b-toaster-bottom-right .b-toast.b-toaster-leave-active, .b-toaster.b-toaster-bottom-left .b-toast.b-toaster-leave-active {
+  position: absolute;
+  -webkit-transition-delay: 0.175s;
+          transition-delay: 0.175s;
+}
+
+.b-toaster.b-toaster-top-right .b-toast.b-toaster-leave-active .toast.fade, .b-toaster.b-toaster-top-left .b-toast.b-toaster-leave-active .toast.fade, .b-toaster.b-toaster-bottom-right .b-toast.b-toaster-leave-active .toast.fade, .b-toaster.b-toaster-bottom-left .b-toast.b-toaster-leave-active .toast.fade {
+  -webkit-transition-delay: 0s;
+          transition-delay: 0s;
+}
+
+.b-toaster {
+  z-index: 1;
+}
+
+.b-toaster .b-toaster-slot {
+  position: relative;
+  display: block;
+}
+
+.b-toaster .b-toaster-slot:empty {
+  display: none !important;
+}
+
+.b-toaster.b-toaster-top-right, .b-toaster.b-toaster-top-left, .b-toaster.b-toaster-top-center, .b-toaster.b-toaster-top-full, .b-toaster.b-toaster-bottom-right, .b-toaster.b-toaster-bottom-left, .b-toaster.b-toaster-bottom-center, .b-toaster.b-toaster-bottom-full {
+  position: fixed;
+  left: 0.5rem;
+  right: 0.5rem;
+  margin: 0;
+  padding: 0;
+  height: 0;
+  overflow: visible;
+}
+
+.b-toaster.b-toaster-top-right .b-toaster-slot, .b-toaster.b-toaster-top-left .b-toaster-slot, .b-toaster.b-toaster-top-center .b-toaster-slot, .b-toaster.b-toaster-top-full .b-toaster-slot, .b-toaster.b-toaster-bottom-right .b-toaster-slot, .b-toaster.b-toaster-bottom-left .b-toaster-slot, .b-toaster.b-toaster-bottom-center .b-toaster-slot, .b-toaster.b-toaster-bottom-full .b-toaster-slot {
+  position: absolute;
+  max-width: 350px;
+  width: 100%;
+  /* IE 11 fix */
+  left: 0;
+  right: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.b-toaster.b-toaster-top-full .b-toaster-slot, .b-toaster.b-toaster-bottom-full .b-toaster-slot {
+  width: 100%;
+  max-width: 100%;
+}
+
+.b-toaster.b-toaster-top-full .b-toaster-slot .b-toast,
+.b-toaster.b-toaster-top-full .b-toaster-slot .toast, .b-toaster.b-toaster-bottom-full .b-toaster-slot .b-toast,
+.b-toaster.b-toaster-bottom-full .b-toaster-slot .toast {
+  width: 100%;
+  max-width: 100%;
+}
+
+.b-toaster.b-toaster-top-right, .b-toaster.b-toaster-top-left, .b-toaster.b-toaster-top-center, .b-toaster.b-toaster-top-full {
+  top: 0;
+}
+
+.b-toaster.b-toaster-top-right .b-toaster-slot, .b-toaster.b-toaster-top-left .b-toaster-slot, .b-toaster.b-toaster-top-center .b-toaster-slot, .b-toaster.b-toaster-top-full .b-toaster-slot {
+  top: 0.5rem;
+}
+
+.b-toaster.b-toaster-bottom-right, .b-toaster.b-toaster-bottom-left, .b-toaster.b-toaster-bottom-center, .b-toaster.b-toaster-bottom-full {
+  bottom: 0;
+}
+
+.b-toaster.b-toaster-bottom-right .b-toaster-slot, .b-toaster.b-toaster-bottom-left .b-toaster-slot, .b-toaster.b-toaster-bottom-center .b-toaster-slot, .b-toaster.b-toaster-bottom-full .b-toaster-slot {
+  bottom: 0.5rem;
+}
+
+.b-toaster.b-toaster-top-right .b-toaster-slot, .b-toaster.b-toaster-bottom-right .b-toaster-slot, .b-toaster.b-toaster-top-center .b-toaster-slot, .b-toaster.b-toaster-bottom-center .b-toaster-slot {
+  margin-left: auto;
+}
+
+.b-toaster.b-toaster-top-left .b-toaster-slot, .b-toaster.b-toaster-bottom-left .b-toaster-slot, .b-toaster.b-toaster-top-center .b-toaster-slot, .b-toaster.b-toaster-bottom-center .b-toaster-slot {
+  margin-right: auto;
+}
+
+.b-toast {
+  display: block;
+  position: relative;
+  max-width: 350px;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  background-clip: padding-box;
+  z-index: 1;
+  border-radius: valid-radius(0.25rem);
+}
+
+.b-toast .toast {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+.b-toast:not(:last-child) {
+  margin-bottom: 0.75rem;
+}
+
+.b-toast.b-toast-solid .toast {
+  background-color: white;
+}
+
+.b-toast .toast {
+  opacity: 1;
+}
+
+.b-toast .toast.fade:not(.show) {
+  opacity: 0;
+}
+
+.b-toast .toast .toast-body {
+  display: block;
+}
+
+.toast {
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #7051FF !important;
+  color: white;
+}
+
+.toast button.close {
+  color: #fff;
+  text-shadow: none;
+  opacity: 1;
+}
+
 @font-face {
   font-family: Gilroy;
   src: url("../fonts/Gilroy-Medium.woff2") format("woff2"), url("../fonts/Gilroy-Medium.eot") format("embedded-opentype"), url("../fonts/Gilroy-Medium.woff") format("woff"), url("../fonts/Gilroy-Medium.ttf") format("truetype");
@@ -56,9 +197,21 @@ body .container {
   }
 }
 
+@media (max-width: 575px) {
+  body .container {
+    margin-bottom: 45px;
+  }
+}
+
 body nav {
   padding-top: 52px;
   margin-bottom: 32px;
+}
+
+@media (max-width: 575px) {
+  body nav {
+    padding-top: 45px;
+  }
 }
 
 @media (max-width: 991px) {
@@ -71,6 +224,7 @@ body nav {
 @media (max-width: 575px) {
   body nav .header__logo {
     margin-left: 9px;
+    padding-top: 0px;
   }
 }
 
@@ -238,6 +392,7 @@ body nav .button_container {
 @media (max-width: 575px) {
   body nav .button_container {
     right: 24px;
+    top: 48px;
   }
 }
 
@@ -773,6 +928,15 @@ body .button__submit {
   border: 0;
   padding: 18px 39px;
   margin-top: 36px;
+}
+
+body .button__submit_transparent {
+  background: transparent;
+  color: #7051FF;
+  border: 2px solid #7051FF;
+  margin-left: 15px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 body .footer {
