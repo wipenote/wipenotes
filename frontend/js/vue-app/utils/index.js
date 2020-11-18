@@ -145,7 +145,7 @@ function getFileDataURL(file) {
 function getTTLList() {
   return [
     { value: 'immediately', label: 'Delete immediately'},
-    // { value: '30_sec', label: '30 seconds'},
+    { value: '30_sec', label: '30 seconds'},
     { value: '15_min', label: '15 minutes'},
     { value: '30_min', label: '30 minutes'},
     { value: '1_hour', label: '1 hour'},

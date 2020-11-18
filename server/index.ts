@@ -43,39 +43,19 @@ const loadDbFromConfig = () => {
     logger.info(`Loading InMemoryDatabse as database`)
     return new database.InMemoryDatabase()
   } else if (databaseType === 'redis') {
-    let db
-    if (databaseConfig) {
-      logger.info(
-        `Using Redis with configuration as supplied by user configuration`
-      )
+      let db
       db = new database.RedisDatabase(databaseConfig)
-    } else {
-      logger.info(`Using Redis with no configuration`)
-      db = new database.RedisDatabase()
-    }
-    return db
-  } else if (fs.existsSync(databaseType)) {
-    logger.info(`Loading database from file: ${databaseType}`)
-    try {
-      const loaded = require(databaseType) as any
-      const {createDatabase} = loaded
-      const db = createDatabase(databaseConfig)
-      const missingFunctions = database.unimplementedFunctionsOfDatabase(
-        db
-      )
-      if (missingFunctions.length) {
-        logger.warn(
-          `Database is missing the following functions: ` +
-          `${missingFunctions}. Continuing anyway.`
-        )
-      }
       return db
-    } catch (err) {
-      logger.error(
-        `Could not load database from file: ${databaseType}.`,
-        err
-      )
-    }
+  } else if (databaseType === 's3') {
+    logger.info(`Loading S3 Storage`)
+
+      return new database.S3Storage(databaseConfig)
+
+  } else if (databaseType === 'googleStorage') {
+    logger.info(`Loading Google Storage`)
+
+      return new database.GoogleStorage(databaseConfig)
+
   } else {
     throw new Error(`Database "${databaseType}" is not found or recognized`)
   }
@@ -307,6 +287,14 @@ const main = async () => {
       res.sendStatus(500)
     }
   })
+
+  app.use(function(err, req, res, next) {
+    res.locals.message = err.message;
+    res.locals.error = process.env.NODE_ENV === 'development' ? err : {};
+
+    res.status(err.status || 500);
+    res.render('pages/error');
+  });
 
   app.listen(3000, () => {
     logger.info('Listening on port 3000')

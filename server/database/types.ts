@@ -68,3 +68,65 @@ export interface Database {
 
     stopDatabase(): Promise<any>
 }
+
+export type GoogleStorageOptions = {
+  keyFilename: string
+  bucket: string
+}
+
+export type S3StorageOptions = {
+  accessKeyId: string,
+  secretAccessKey: string,
+  region: string,
+  endpoint: string,
+  bucket: string,
+  basePath: string,
+}
+
+export type S3StorageNoteStatusFile = {
+  messageLength: number
+  filesLength: number
+  burnTime: number
+  burnDate: number
+  burnDateValue: string
+}
+
+export type S3StorageNoteFullFile = {
+  encryptedMessage: {
+    data: number[]
+    IV: number[]
+  }
+  messageLength: number
+  files: Array<{
+    data: number[]
+    IV: number[]
+  }>
+  burnTime: number
+  burnDate: number
+  burnDateValue: string
+  encryptionScheme?: any
+}
+
+export type GoogleStorageNoteStatusFile = {
+  messageLength: number
+  filesLength: number
+  burnTime: number
+  burnDate: number
+  burnDateValue: string
+}
+
+export type GoogleStorageNoteFullFile = {
+  encryptedMessage: {
+    data: number[]
+    IV: number[]
+  }
+  messageLength: number
+  files: Array<{
+    data: number[]
+    IV: number[]
+  }>
+  burnTime: number
+  burnDate: number
+  burnDateValue: string
+  encryptionScheme?: any
+}

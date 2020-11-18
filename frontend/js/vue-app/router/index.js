@@ -20,6 +20,11 @@ const routes = [
         component: () => import('../views/NoteCreated.vue'),
       },
       {
+        path: '/about-us',
+        name: 'about-us',
+        component: () => import('../views/AboutUs.vue'),
+      },
+      {
         path: '/:noteId',
         name: 'get-note',
         component: () => import('../views/Note.vue'),
