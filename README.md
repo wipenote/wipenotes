@@ -56,3 +56,8 @@ REDIS_PASSWORD=password
 *REDIS_HOST* - redis server url<br/>
 *REDIS_PORT* - redis server port<br/>
 *REDIS_PASSWORD* - redis server password
+
+**Memory storage**
+```
+DATABASE_TYPE=in-memory-database
+```
