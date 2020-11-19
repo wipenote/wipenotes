@@ -82,10 +82,14 @@ export const getEnvDatabaseConfig = () => {
 
   console.log('process.env', process.env.DATABASE_TYPE)
   switch (databaseType) {
+    case 'in-memory-database':
+      databaseConfig = {}
+      break
+
     case 'redis':
       databaseConfig = {
         host: process.env.REDIS_HOST || 'localhost',
-        port: process.env.REDIST_PORT || 6379,
+        port: process.env.REDIST_PORT ? +process.env.REDIST_PORT : 6379,
         password: process.env.REDIS_PASSWORD || '',
       }
       break
