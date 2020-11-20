@@ -1,4 +1,6 @@
-<template>
+{% extends "../layouts/default.njk" %}
+
+{% block content %}
   <div class="form">
     <div class="window">
       <div class="form__wrapper-img">
@@ -30,21 +32,9 @@
 
     </div>
 
-    <router-link class="button__submit button__submit_link" to="/">
+    <a href="/" class="button__submit button__submit_link">
       Create note
-    </router-link>
+    </a>
 
   </div>
-
-</template>
-
-<script>
-  export default {
-    name: 'AboutUs',
-    methods: {
-      navigateToCreateNote() {
-        this.$router.push({name: 'home'})
-      }
-    }
-  }
-</script>
+{% endblock %}

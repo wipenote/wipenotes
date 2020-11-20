@@ -12,17 +12,16 @@ npm run start
 Server available at http://localhost:3000
 
 ### List of supported databases
-* Memory [in-memory-database]
-* Google Cloud Storage [googleStorage]
+* Google Cloud Storage [google-storage]
 * S3-compatible storage [s3]
 * Redis [redis]
 
-By default notes will be stored in memory. If you want to change database type set environment variable with one of supported DATABASE_TYPE with database config params 
+If you want to change database type set environment variable with one of supported DATABASE_TYPE with database config params 
 
 ### Environment variables for each of databases
 **Google Cloud Storage**
 ```
-DATABASE_TYPE=googleStorage
+DATABASE_TYPE=google-storage
 GOOGLE_STORAGE_KEYFILENAME=/app/googleStorageKeyFile.json
 GOOGLE_STORAGE_BUCKET=breachreport-wipenote
 ```
@@ -56,8 +55,3 @@ REDIS_PASSWORD=password
 *REDIS_HOST* - redis server url<br/>
 *REDIS_PORT* - redis server port<br/>
 *REDIS_PASSWORD* - redis server password
-
-**Memory storage**
-```
-DATABASE_TYPE=in-memory-database
-```

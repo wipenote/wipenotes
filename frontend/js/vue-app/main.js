@@ -4,9 +4,7 @@ import { BootstrapVue, IconsPlugin, ToastPlugin } from 'bootstrap-vue'
 import Clipboard from 'v-clipboard'
 
 import App from './App.vue'
-// import store from './store'
 import router from './router'
-// import './assets/styles/index.scss'
 
 Vue.use(Plugin)
 Vue.use(BootstrapVue)

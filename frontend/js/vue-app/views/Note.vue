@@ -121,7 +121,7 @@
       @click="replyNote"
       class="button__submit button__submit_transparent"
       type="submit"
-      :disabled="!isNoteOpened">
+      :disabled="!isNoteOpened || !(this.noteData && this.noteData.message)">
       Reply note
     </button>
 

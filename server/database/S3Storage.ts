@@ -1,35 +1,14 @@
-import uuid from 'uuid'
-import * as generator from 'generate-password';
-
-import {logger} from '../logger'
-
 import {
   NoteId,
-  LogId,
   Note,
-  NoteOptions,
-  Log,
   Database,
-  GoogleStorageOptions,
   S3StorageOptions,
   S3StorageNoteStatusFile, S3StorageNoteFullFile
 } from './types'
-import _ from 'lodash'
-import {generateId, HandledError} from "../utils";
-import path from "path";
-
+import {generateId, HandledError} from '../utils';
+import path from 'path';
 const AWS = require('aws-sdk');
-const {Readable} = require("stream")
 
-/**
- * Database implementation with Redis as backend.
- *
- * Uses [ioredis](https://www.npmjs.com/package/ioredis) as client library.
- *
- * Call `configureRedis(...)` with the same options that you would to ioredis.
- * If calling with no arguments, then just do not call configureRedis.
- * `startDatabase()` will fix that for you.
- */
 export class S3Storage implements Database {
   private storage: Storage
   private options: S3StorageOptions
@@ -104,14 +83,6 @@ export class S3Storage implements Database {
     return id
   }
 
-  async storeLog(entry: Log) {
-    const id = uuid.v4() as LogId
-    // const jsonified = JSON.stringify(entry)
-    logger.debug(`Storing log ${id} in Redis under log-${id}`)
-
-    return id
-  }
-
   async getNoteStatus(noteId: NoteId) {
     let isObjectExist = false
     try {
@@ -163,7 +134,7 @@ export class S3Storage implements Database {
     }
   }
 
-  async getNote(noteId: NoteId, options: NoteOptions) {
+  async getNote(noteId: NoteId) {
 
     let note: S3StorageNoteFullFile
 
@@ -206,19 +177,6 @@ export class S3Storage implements Database {
       },
     })
       .promise()
-  }
-
-  async getLog(logId: LogId) {
-    // const key = `log-${logId}`
-    // const doesExist = await this.redis.exists(key as string)
-    // if (!doesExist) {
-    //   throw new Error(`Log with Id "${logId}" does not exist.`)
-    // }
-    //
-    // const jsonified = (await this.redis.get(key)) || ''
-    // logger.debug(`Log ${logId} was read`)
-    // return JSON.parse(jsonified)
-    return JSON.parse('{}')
   }
 
   async noteExists(noteId: NoteId) {
