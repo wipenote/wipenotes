@@ -230,22 +230,7 @@ export default {
     if (this.$refs.messageTextarea) {
       this.$nextTick(() => {
         this.$refs.messageTextarea.focus()
-        /*let text = this.$route.params.replyMessage
-        // Insert text into current position
-        let el = this.$refs.messageTextarea
-        let cursorPos = el.selectionEnd; // Get current Position
-        this.message =
-          this.message.substring(0, cursorPos) +
-          text +
-          this.message.substring(cursorPos);
 
-        // Get new cursor position
-        cursorPos += text.length;
-
-        // Wait until vue finishes rendering the new text and set the cursor position.
-        this.$nextTick(() => el.setSelectionRange(cursorPos, cursorPos));
-
-        */
         if (typeof this.$refs.messageTextarea.selectionStart == "number") {
           this.$refs.messageTextarea.selectionStart = this.$refs.messageTextarea.selectionEnd = this.$refs.messageTextarea.value.length;
         } else if (typeof this.$refs.messageTextarea.createTextRange != "undefined") {

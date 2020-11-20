@@ -341,6 +341,7 @@ body {
           .form__file-list {
             display: flex;
             flex-wrap: wrap;
+            margin-top: auto;
           }
           .form__filename {
             background-color: #f7f7f7;
@@ -646,6 +647,14 @@ body {
     padding: 18px 39px;
     margin-top: 36px;
 
+    &_link {
+      display: inline-block;
+      text-decoration: none;
+      &:hover {
+        color: #fff;
+      }
+    }
+
     &_transparent {
       background: transparent;
       color: #7051FF;
@@ -653,6 +662,12 @@ body {
       margin-left: 15px;
       padding-top: 16px;
       padding-bottom: 16px;
+
+      &:disabled {
+        background: rgb(232, 232, 232);
+        border: none;
+        cursor: default;
+      }
     }
   }
   .footer {

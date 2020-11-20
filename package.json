@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "npm run build-assets-prod && npm run start-backend-prod",
     "start-backend-prod": "NODE_ENV=production ts-node server/index.ts",
     "start-backend-dev": "NODE_ENV=development nodemon server/index.ts",
     "build-assets-prod": "webpack --config=./webpack.config.js",
@@ -21,6 +22,8 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/register": "^7.4.4",
     "@babel/runtime": "^7.7.4",
+    "@google-cloud/storage": "^5.5.0",
+    "aws-sdk": "^2.794.0",
     "axios": "^0.21.0",
     "babel-loader": "^8.1.0",
     "body-parser": "^1.19.0",

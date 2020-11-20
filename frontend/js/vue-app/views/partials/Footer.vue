@@ -4,7 +4,7 @@
       <div class="row">
         <div class="footer__col col-md-3">
           <a class="footer__link" href="#">Github</a>
-          <a class="footer__link" href="#">About us</a>
+          <router-link class="footer__link" to="/about-us">About us</router-link>
         </div>
         <div class="footer__col-middle col-md-6">
           <h3 class="footer__title">Donate (btc)</h3>

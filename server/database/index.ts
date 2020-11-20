@@ -1,7 +1,5 @@
-export { Database, Log, LogId, Note, NoteId, NoteOptions } from './types'
+export { Database, Note, NoteId } from './types'
 
-export { InMemoryDatabase } from './InMemoryDatabase'
-
-export { RedisDatabase } from './RedisDatabase'
-
-export { unimplementedFunctionsOfDatabase } from './util'
+export { RedisStorage } from './RedisStorage'
+export { S3Storage } from './S3Storage'
+export { GoogleStorage } from './GoogleStorage'

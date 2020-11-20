@@ -1,12 +1,10 @@
+
 require('dotenv').config()
 import express from 'express'
 import expressPino from 'express-pino-logger'
 import helmet from 'helmet'
-import rateLimit from 'express-rate-limit'
-import fs from 'fs'
 import * as nunjucks from 'nunjucks'
 import * as bodyParser from 'body-parser'
-import expressNobots from './thirdparty/express-nobots'
 import cors from 'cors'
 
 import * as database from './database'
@@ -14,94 +12,10 @@ import * as utils from './utils'
 
 import {
   Config,
-  initConfigurationWatch,
-  stopConfigurationWatch,
 } from './config'
 import {logger} from './logger'
-import {RedisOptions} from 'ioredis'
 
-const JSON_MAX_SIZE = process.env.JSON_MAX_SIZE || '5mb'
-const LIMIT_WINDOW_MS = Number.parseInt(
-  process.env.LIMIT_WINDOW_MS || `${15 * 60 * 8 * 1000}`
-)
-const MAX_REQUEST_RATE_LIMIT = Number.parseInt(
-  process.env.MAX_REQUEST_RATE_LIMIT || '100'
-)
-
-const LIMITER = rateLimit({
-  windowMs: LIMIT_WINDOW_MS,
-  max: MAX_REQUEST_RATE_LIMIT,
-})
-
-let db
-
-const loadDbFromConfig = () => {
-  const databaseType = Config.databaseType()
-  const databaseConfig = Config.databaseConfig()
-
-  if (databaseType === 'in-memory-database') {
-    logger.info(`Loading InMemoryDatabse as database`)
-    return new database.InMemoryDatabase()
-  } else if (databaseType === 'redis') {
-    let db
-    if (databaseConfig) {
-      logger.info(
-        `Using Redis with configuration as supplied by user configuration`
-      )
-      db = new database.RedisDatabase(databaseConfig)
-    } else {
-      logger.info(`Using Redis with no configuration`)
-      db = new database.RedisDatabase()
-    }
-    return db
-  } else if (fs.existsSync(databaseType)) {
-    logger.info(`Loading database from file: ${databaseType}`)
-    try {
-      const loaded = require(databaseType) as any
-      const {createDatabase} = loaded
-      const db = createDatabase(databaseConfig)
-      const missingFunctions = database.unimplementedFunctionsOfDatabase(
-        db
-      )
-      if (missingFunctions.length) {
-        logger.warn(
-          `Database is missing the following functions: ` +
-          `${missingFunctions}. Continuing anyway.`
-        )
-      }
-      return db
-    } catch (err) {
-      logger.error(
-        `Could not load database from file: ${databaseType}.`,
-        err
-      )
-    }
-  } else {
-    throw new Error(`Database "${databaseType}" is not found or recognized`)
-  }
-}
-
-const createLog = async (req: express.Request) => {
-  const log: database.Log = {
-    accessUrl: req.url,
-    ip: req.ip,
-    timeOfAccess: Date.now(),
-  }
-  return await db.storeLog(log)
-}
-
-const isUuidV4 = (id: any) => {
-  if (!id) {
-    return false
-  }
-  return /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i.test(
-    id
-  )
-}
-
-const isArray = (val: any) => {
-  return val && val.length !== undefined
-}
+let db: database.Database
 
 const burnDateLabels = {
   'immediately': 0,
@@ -112,7 +26,6 @@ const burnDateLabels = {
   '3_hours': 1000 * 60 * 60 * 3,
   '24_hours': 1000 * 60 * 60 * 24,
 }
-type BurnDateLabel = 'immediately' | '30_sec' | '15_min' | '30_min' | '1_hour' | '3_hours' | '24_hours'
 
 const getBurnDateFromLabel = (label: string) => {
   return burnDateLabels[label] || 0
@@ -124,16 +37,15 @@ const validateNote = (note: any) => {
     note.allowedReads > 0 &&
     Number.isInteger(note.burnDate) &&
     note.burnDate > Date.now() &&
-    isArray(note.encryptedMessage) &&
-    isArray(note.fingerprint) &&
-    isArray(note.IV)
+    Array.isArray(note.encryptedMessage) &&
+    Array.isArray(note.fingerprint) &&
+    Array.isArray(note.IV)
   )
 }
 
-const main = async () => {
-  initConfigurationWatch()
+const initApp = async () => {
 
-  db = loadDbFromConfig()
+  db = Config.initDatabase()
   await db.startDatabase()
 
   const app = express()
@@ -150,15 +62,9 @@ const main = async () => {
   }))
 
   app.use(bodyParser.json({
-    limit: '50mb'
+    limit: '150mb'
   }))
 
-  // app.use(
-  //     express.json({
-  //         limit: JSON_MAX_SIZE,
-  //     })
-  // )
-  // app.use('/api', LIMITER)
   app.use(helmet())
   app.use(cors())
   app.use('/assets', express.static(__dirname + '/public'));
@@ -167,6 +73,10 @@ const main = async () => {
     app.use(expressPino({logger}))
   }
 
+  app.get('/about-us', (req: express.Request, res: express.Response) => {
+    res.render('pages/about-us');
+  })
+
   app.get(
     '/api/note/:ID/status',
     async function (req: express.Request, res: express.Response) {
@@ -174,7 +84,6 @@ const main = async () => {
         const {ID} = req.params
 
         const noteStatus = await db.getNoteStatus(ID)
-        console.log('notestatus', noteStatus)
         logger.info(`Returning status of note with ID ${ID}`)
         res.json(noteStatus)
       } catch (err) {
@@ -194,7 +103,6 @@ const main = async () => {
       try {
         const {ID} = req.params
 
-        const logId = await createLog(req)
         const exists = await db.noteExists(ID)
         console.log('exists', exists)
         if (!exists) {
@@ -205,15 +113,7 @@ const main = async () => {
           return
         }
 
-        const options: database.NoteOptions = {
-          accessInfo: {
-            logId,
-          },
-          addAccess: true,
-          checkAllowedReads: true,
-          checkBurnDate: true,
-        }
-        const note = await db.getNote(ID, options)
+        const note = await db.getNote(ID)
         console.log('note', note)
         logger.info(`Retrieved note "${ID}" and sending it back`)
         res.json(note)
@@ -256,7 +156,6 @@ const main = async () => {
         //     return
         // }
 
-        await createLog(req)
         const ID = await db.storeNote(note)
         logger.info(`Created note: ${ID}`)
         res.json({ID})
@@ -308,18 +207,23 @@ const main = async () => {
     }
   })
 
+  app.use(function (err, req, res, next) {
+    res.locals.message = err.message;
+    res.locals.error = process.env.NODE_ENV === 'development' ? err : {};
+
+    res.status(err.status || 500);
+    res.render('pages/error');
+  });
+
   app.listen(3000, () => {
     logger.info('Listening on port 3000')
   })
 }
 
-if (require.main === module) {
-  process.on('SIGINT', async () => {
-    logger.info('Caught interrupt signal')
-    stopConfigurationWatch()
-    await db.stopDatabase()
-    process.exit()
-  })
+process.on('SIGINT', async () => {
+  logger.info('Caught interrupt signal')
+  await db.stopDatabase()
+  process.exit()
+})
 
-  main()
-}
+initApp()

@@ -4,20 +4,11 @@ import * as generator from 'generate-password';
 
 import {logger} from '../logger'
 
-import {NoteId, LogId, Note, NoteOptions, Log, Database} from './types'
+import {NoteId, Note, Database} from './types'
 import _ from 'lodash'
 import {generateId, HandledError} from "../utils";
 
-/**
- * Database implementation with Redis as backend.
- *
- * Uses [ioredis](https://www.npmjs.com/package/ioredis) as client library.
- *
- * Call `configureRedis(...)` with the same options that you would to ioredis.
- * If calling with no arguments, then just do not call configureRedis.
- * `startDatabase()` will fix that for you.
- */
-export class RedisDatabase implements Database {
+export class RedisStorage implements Database {
   private redis: Redis.Redis
 
   constructor(options?: RedisOptions) {
@@ -51,14 +42,6 @@ export class RedisDatabase implements Database {
     return id
   }
 
-  async storeLog(entry: Log) {
-    const id = uuid.v4() as LogId
-    const jsonified = JSON.stringify(entry)
-    logger.debug(`Storing log ${id} in Redis under log-${id}`)
-    await this.redis.set(`log-${id}`, jsonified)
-    return id
-  }
-
   async getNoteStatus(noteId: NoteId) {
     const doesExist = await this.redis.exists(`note-${noteId}`)
     if (!doesExist) {
@@ -82,13 +65,13 @@ export class RedisDatabase implements Database {
 
     return {
       hasBurned: false,
-      files: note.files.length,
+      files: note.files && note.files.length || 0,
       messageLength: note.messageLength,
       burnDate: note.burnDateValue,
     }
   }
 
-  async getNote(noteId: NoteId, options: NoteOptions) {
+  async getNote(noteId: NoteId) {
 
     const doesExist = await this.redis.exists(`note-${noteId}`)
     if (!doesExist) {
@@ -112,18 +95,6 @@ export class RedisDatabase implements Database {
     return note
   }
 
-  async getLog(logId: LogId) {
-    const key = `log-${logId}`
-    const doesExist = await this.redis.exists(key as string)
-    if (!doesExist) {
-      throw new Error(`Log with Id "${logId}" does not exist.`)
-    }
-
-    const jsonified = (await this.redis.get(key)) || ''
-    logger.debug(`Log ${logId} was read`)
-    return JSON.parse(jsonified)
-  }
-
   async noteExists(noteId: NoteId) {
     return !!(await this.redis.exists(`note-${noteId}`))
   }
@@ -138,19 +109,6 @@ export class RedisDatabase implements Database {
 
     const note = JSON.parse((await this.redis.get(`note-${noteId}`)) || '')
     return note.burnDate < Date.now()
-  }
-
-  async hasBeenRead(noteId: NoteId) {
-    const noteExists = await this.redis.exists(`note-${noteId}`)
-    if (!noteExists) {
-      throw new Error(
-        `Note with id "${noteId}" does not exist. Cannot check read count.`
-      )
-    }
-
-    const note = JSON.parse((await this.redis.get(`note-${noteId}`)) || '')
-    const reads = JSON.parse((await this.redis.get(`read-${noteId}`)) || '')
-    return reads.length >= note.allowedReads
   }
 
   async stopDatabase() {

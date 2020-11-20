@@ -20,7 +20,7 @@
             </div>
 
 
-            <div v-if="isNoteOpened">
+            <div class="form__file-list" v-if="isNoteOpened">
               <button
                 v-for="file in files"
                 class="form__filename"
@@ -38,7 +38,7 @@
               </button>
             </div>
 
-            <div v-else-if="noteStatusData && noteStatusData.files">
+            <div class="form__file-list" v-else-if="noteStatusData && noteStatusData.files">
               <button
                 v-for="filename in fileStatuses"
                 class="form__filename"
@@ -121,7 +121,7 @@
       @click="replyNote"
       class="button__submit button__submit_transparent"
       type="submit"
-      :disabled="!isNoteOpened">
+      :disabled="!isNoteOpened || !(this.noteData && this.noteData.message)">
       Reply note
     </button>
 

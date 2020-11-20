@@ -17,6 +17,7 @@
                 <div class="footer__col">
                   <a class="footer__link" href="#">Github</a>
                   <a class="footer__link" href="#">About us</a>
+                  <router-link class="footer__link" to="/about-us">About us</router-link>
                 </div>
                 <div class="footer__col-middle">
                   <h3 class="footer__title">Donate (btc)</h3>
