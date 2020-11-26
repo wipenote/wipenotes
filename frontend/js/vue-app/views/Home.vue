@@ -7,7 +7,7 @@
     >
       <div class="form__wrapper-img">
         <div class="form__top">
-          <div class="textarea__wrapper">
+          <div class="textarea__wrapper" @paste="pasteTextarea">
             <textarea
               v-if="isNoteVisible"
               v-model="message"
@@ -35,7 +35,7 @@
                   <img class="form__filename-icon-image" v-else :src="file.imageData" alt="">
                 </span>
                 <span class="form__filename-title">
-                  {{file.file.name}}
+                  {{file.file && file.file.name}}
                 </span>
                 <span class="form__filename-delete" @click="deleteAttachment(file)">x</span>
               </button>
@@ -375,6 +375,34 @@ export default {
     },
     closeMobileNoteSettings() {
       this.isVisibleMobileSettingsModal = false
+    },
+    async pasteTextarea(pasteEvent, callback) {
+      pasteEvent.preventDefault()
+      if (pasteEvent.clipboardData === false){
+        if (typeof(callback) == "function"){
+          callback(undefined);
+        }
+      }
+
+      var items = pasteEvent.clipboardData.items;
+
+      if (items === undefined){
+        if (typeof(callback) == "function"){
+          callback(undefined);
+        }
+      }
+
+      const attachments = []
+
+      for (var i = 0; i < items.length; i++) {
+        var blob = items[i].getAsFile();
+
+        if (blob) {
+          attachments.push(blob)
+        }
+      }
+
+      this.addFileAttachments(attachments)
     }
   }
 }
