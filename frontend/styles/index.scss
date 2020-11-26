@@ -327,6 +327,11 @@ body {
               align-items: baseline;
               padding-right: 10px;
             }
+
+            a.link {
+              color: #007bff !important;
+              cursor: pointer;
+            }
             
             // &::before {
             //   content: '';

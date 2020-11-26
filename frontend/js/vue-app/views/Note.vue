@@ -59,56 +59,6 @@
 
         </div>
       </div>
-      <div class="form__bottom">
-        <div class="form__bottom-left">
-          <button class="button__attachment">
-            <img src="/assets/images/attachment.svg" alt="attachment">
-          </button>
-        </div>
-        <div class="form__bottom-right form__bottom-right_desktop">
-          <div class="ttl-selector ttl-selector_disabled">
-            <div class="ttl-selector-current">
-              <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
-              <span class="ttl-selector-text">
-                {{currentTTLLabel}}
-              </span>
-              <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
-            </div>
-          </div>
-          <form
-            id="field-password-input-wrapper"
-            class="field__password field__password_disabled"
-            @submit.prevent="onPasswordEnter"
-          >
-            <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
-            <input
-              id="field-password-input"
-              class="field__password__input"
-              type="password"
-              v-model="notePassword"
-              placeholder="Enter password"
-              @focus="onPasswordFieldFocus"
-              @blur="onPasswordFieldBlur"
-              :disabled="isNoteOpened"
-            />
-
-            <b-popover
-              :show.sync="isShowPasswordPopover"
-              target="field-password-input-wrapper"
-              placement="topleft"
-              triggers=""
-            >
-              Please, enter password
-            </b-popover>
-          </form>
-        </div>
-
-        <div class="form__bottom-right form__bottom-right_mobile">
-          <button @click="onClickShowNote" class="button__attachment button__attachment_mobile">
-            <img src="/assets/images/eye.svg" alt="open the password">
-          </button>
-        </div>
-      </div>
 
       <div v-if="isShowErrorText" class="form__bottom-error">
         {{errorText}}

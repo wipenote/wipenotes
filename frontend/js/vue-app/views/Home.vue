@@ -8,6 +8,15 @@
       <div class="form__wrapper-img">
         <div class="form__top">
           <div class="textarea__wrapper" @paste="pasteTextarea">
+            <div
+              style="width: 500px;height: 200px;"
+              class="textarea"
+              contenteditable="true"
+              ref="htmlField"
+              v-html="htmlTextField"
+              @input="onEditHtmlField">
+            </div>
+
             <textarea
               v-if="isNoteVisible"
               v-model="message"
@@ -197,7 +206,7 @@
     secrets,
     createNote,
     getNote,
-    getNoteStatus, getFileDataURL, getTTLList,
+    getNoteStatus, getFileDataURL, getTTLList, validateEmail,
   } from '../utils'
 import * as generator from 'generate-password'
 
@@ -220,12 +229,15 @@ export default {
       attachmentPopoverText: '',
       isVisibleMobileSettingsModal: false,
       dragging: false,
+      htmlTextField: '',
     }
   },
   mounted() {
     if (this.$route.params.replyMessage) {
       this.message = this.$route.params.replyMessage
     }
+
+    console.log('ref', this.$refs.htmlField)
 
     if (this.$refs.messageTextarea) {
       this.$nextTick(() => {
@@ -263,6 +275,64 @@ export default {
     }
   },
   methods: {
+    getPos() {
+      // for contentedit field
+      if (this.isContentEditable) {
+        // this.target.focus()
+        let _range = document.getSelection().getRangeAt(0)
+        let range = _range.cloneRange()
+        range.selectNodeContents(this.$refs.htmlField)
+        range.setEnd(_range.endContainer, _range.endOffset)
+        return range.toString().length;
+      }
+      // for texterea/input element
+      return this.$refs.htmlField.selectionStart
+    },
+
+    placeCaretAtEnd(el) {
+      el.focus();
+      if (typeof window.getSelection != "undefined"
+        && typeof document.createRange != "undefined") {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } else if (typeof document.body.createTextRange != "undefined") {
+        const textRange = document.body.createTextRange();
+        textRange.moveToElementText(el);
+        textRange.collapse(false);
+        textRange.select();
+      }
+    },
+    getRecognizedWordHtml(word) {
+      if (validateEmail(word)) {
+        return `<a class="link" href="mailto:${word}">${word}</a>`
+      }
+
+      return `<span>${word}</span>`
+    },
+    onEditHtmlField(e) {
+
+      // this.myHtmlCode = e.target.innerHTML;
+      console.log('Html:', e.target.innerHTML);
+      console.log('Text:', e.target.innerText);
+      const words = e.target.innerText.split(' ')
+
+      const recognizedWordsList = []
+
+      for (let word of words) {
+        recognizedWordsList.push(this.getRecognizedWordHtml(word))
+      }
+
+      this.htmlTextField = recognizedWordsList.join(' ')
+      console.log('pos', e.target.selectionStart)
+      console.log('target', e.target)
+      this.$nextTick(() => {
+        this.placeCaretAtEnd(this.$refs.htmlField)
+      })
+    },
     onDragOver(e) {
       console.log('dragover')
     },
