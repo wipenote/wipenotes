@@ -13,10 +13,16 @@
               class="textarea"
               contenteditable="true"
               ref="htmlField"
-              v-html="htmlTextField"
-              @input="onEditHtmlField">
+              v-html="htmlTextField">
             </div>
-
+            <b-popover
+              v-for="p in htmlPopovers"
+              :target="p.id"
+              placement="auto"
+              title="Popover!"
+              triggers="hover focus"
+              :content="p.content">
+            </b-popover>
             <textarea
               v-if="isNoteVisible"
               v-model="message"
@@ -144,7 +150,6 @@
       <b-spinner v-if="isNoteCreating" small variant="dark"></b-spinner>
     </button>
 
-
     <b-modal
       id="confirm-modal"
       ref="confirmModal"
@@ -209,6 +214,7 @@
     getNoteStatus, getFileDataURL, getTTLList, validateEmail,
   } from '../utils'
 import * as generator from 'generate-password'
+import * as WAValidator from 'wallet-address-validator'
 
 export default {
   name: 'Home',
@@ -229,7 +235,8 @@ export default {
       attachmentPopoverText: '',
       isVisibleMobileSettingsModal: false,
       dragging: false,
-      htmlTextField: '',
+      currentMessageHtml: '',
+      htmlPopovers: [],
     }
   },
   mounted() {
@@ -266,6 +273,22 @@ export default {
     },
     currentMessage() {
       return this.isNoteVisible ? this.message : new Array(this.message.length).fill('*').join('')
+    },
+    htmlTextField() {
+      const items = []
+      for (let item of this.message.matchAll(/\S+/ig)) {
+        items.push(item)
+      }
+
+      const htmlContent = this.message.replace(/\S+/ig, (s, content) => {
+        console.log('re', s, content, this.getRecognizedWordHtml(s))
+        return this.getRecognizedWordHtml(s)
+      })
+
+      console.log('htmlcontent', htmlContent)
+      return htmlContent.replace(/[\n\r]/ig, (s, content) => {
+        return `<div>${s}</div>`
+      })
     }
   },
   watch: {
@@ -275,63 +298,33 @@ export default {
     }
   },
   methods: {
-    getPos() {
-      // for contentedit field
-      if (this.isContentEditable) {
-        // this.target.focus()
-        let _range = document.getSelection().getRangeAt(0)
-        let range = _range.cloneRange()
-        range.selectNodeContents(this.$refs.htmlField)
-        range.setEnd(_range.endContainer, _range.endOffset)
-        return range.toString().length;
-      }
-      // for texterea/input element
-      return this.$refs.htmlField.selectionStart
-    },
+    replaceSubstring({targetString, index, length, replacedString}) {
 
-    placeCaretAtEnd(el) {
-      el.focus();
-      if (typeof window.getSelection != "undefined"
-        && typeof document.createRange != "undefined") {
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        range.collapse(false);
-        var sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-      } else if (typeof document.body.createTextRange != "undefined") {
-        const textRange = document.body.createTextRange();
-        textRange.moveToElementText(el);
-        textRange.collapse(false);
-        textRange.select();
-      }
     },
     getRecognizedWordHtml(word) {
       if (validateEmail(word)) {
         return `<a class="link" href="mailto:${word}">${word}</a>`
       }
 
-      return `<span>${word}</span>`
-    },
-    onEditHtmlField(e) {
+      const bitcoinPopovers = []
 
-      // this.myHtmlCode = e.target.innerHTML;
-      console.log('Html:', e.target.innerHTML);
-      console.log('Text:', e.target.innerText);
-      const words = e.target.innerText.split(' ')
+      console.log('root', this)
+      if (WAValidator.validate(word, 'BTC')) {
+        let bitcoinStr = `<span class="link_bitcoin">${word}</span><i id="btc-${word}" class="fab fa-btc"></i>`
+        bitcoinStr += `<span link="https://www.blockchain.com/btc/address/3CWmEX6DZGVvPkTMcbSfLrhvMjuqsQzYRN"></span>`
+        const el = `<b-popover :target="btc-${word}" :placement="placement" title="Popover!" triggers="hover focus" :content="Placement"></b-popover>`
+        // bitcoinStr +=
 
-      const recognizedWordsList = []
-
-      for (let word of words) {
-        recognizedWordsList.push(this.getRecognizedWordHtml(word))
+        bitcoinPopovers.push({
+          id: `btc-${word}`,
+          title: 'bitcoin',
+          content: 'cont'
+        })
+        this.htmlPopovers = bitcoinPopovers
+        return bitcoinStr
       }
 
-      this.htmlTextField = recognizedWordsList.join(' ')
-      console.log('pos', e.target.selectionStart)
-      console.log('target', e.target)
-      this.$nextTick(() => {
-        this.placeCaretAtEnd(this.$refs.htmlField)
-      })
+      return `${word}`
     },
     onDragOver(e) {
       console.log('dragover')
@@ -447,7 +440,7 @@ export default {
       this.isVisibleMobileSettingsModal = false
     },
     async pasteTextarea(pasteEvent, callback) {
-      pasteEvent.preventDefault()
+      // pasteEvent.preventDefault()
       if (pasteEvent.clipboardData === false){
         if (typeof(callback) == "function"){
           callback(undefined);
@@ -468,6 +461,7 @@ export default {
         var blob = items[i].getAsFile();
 
         if (blob) {
+          console.log('blob', blob)
           attachments.push(blob)
         }
       }

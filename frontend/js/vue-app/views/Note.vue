@@ -5,7 +5,13 @@
 
         <div class="form__top">
           <div class="textarea__wrapper">
+            <div
+              class="textarea"
+              contenteditable="true"
+              v-html="currentMessage"
+            ></div>
             <textarea
+              style="display: none;"
               v-if="!noteLoading"
               v-model="currentMessage"
               class="textarea"
@@ -159,9 +165,10 @@
     secrets,
     createNote,
     getNote,
-    getNoteStatus, getTTLList,
+    getNoteStatus, getTTLList, validateEmail,
   } from '../utils'
   import axios from 'axios'
+  import * as WAValidator from "wallet-address-validator";
 
   export default {
     name: 'Home',
@@ -229,6 +236,17 @@
       }
     },
     methods: {
+      getRecognizedWordHtml(word) {
+        if (validateEmail(word)) {
+          return `<a class="link" href="mailto:${word}">${word}</a>`
+        }
+
+        if (WAValidator.validate(word, 'BTC')) {
+          return `<a class="link_bitcoin" href="bitcoin:${word}">${word}</a>`
+        }
+
+        return `<span>${word}</span>`
+      },
       onPasswordFieldFocus() {
         this.closeShowPasswordPopover()
       },
