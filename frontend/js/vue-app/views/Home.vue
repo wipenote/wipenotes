@@ -8,21 +8,6 @@
       <div class="form__wrapper-img">
         <div class="form__top">
           <div class="textarea__wrapper" @paste="pasteTextarea">
-            <div
-              style="width: 500px;height: 200px;"
-              class="textarea"
-              contenteditable="true"
-              ref="htmlField"
-              v-html="htmlTextField">
-            </div>
-            <b-popover
-              v-for="p in htmlPopovers"
-              :target="p.id"
-              placement="auto"
-              title="Popover!"
-              triggers="hover focus"
-              :content="p.content">
-            </b-popover>
             <textarea
               v-if="isNoteVisible"
               v-model="message"
@@ -30,7 +15,9 @@
               class="textarea"
               name="text"
               placeholder="Write your note here"
-              autofocus />
+              autofocus
+              spellcheck="false"
+            />
 
             <textarea
               v-else
@@ -214,10 +201,13 @@
     getNoteStatus, getFileDataURL, getTTLList, validateEmail,
   } from '../utils'
 import * as generator from 'generate-password'
-import * as WAValidator from 'wallet-address-validator'
+import CompiledHtml from './CompiledHtml.js'
 
 export default {
   name: 'Home',
+  components: {
+    CompiledHtml
+  },
   props: {},
   data() {
     return {
@@ -274,22 +264,7 @@ export default {
     currentMessage() {
       return this.isNoteVisible ? this.message : new Array(this.message.length).fill('*').join('')
     },
-    htmlTextField() {
-      const items = []
-      for (let item of this.message.matchAll(/\S+/ig)) {
-        items.push(item)
-      }
 
-      const htmlContent = this.message.replace(/\S+/ig, (s, content) => {
-        console.log('re', s, content, this.getRecognizedWordHtml(s))
-        return this.getRecognizedWordHtml(s)
-      })
-
-      console.log('htmlcontent', htmlContent)
-      return htmlContent.replace(/[\n\r]/ig, (s, content) => {
-        return `<div>${s}</div>`
-      })
-    }
   },
   watch: {
     selectedPassword(newVal) {
@@ -298,34 +273,6 @@ export default {
     }
   },
   methods: {
-    replaceSubstring({targetString, index, length, replacedString}) {
-
-    },
-    getRecognizedWordHtml(word) {
-      if (validateEmail(word)) {
-        return `<a class="link" href="mailto:${word}">${word}</a>`
-      }
-
-      const bitcoinPopovers = []
-
-      console.log('root', this)
-      if (WAValidator.validate(word, 'BTC')) {
-        let bitcoinStr = `<span class="link_bitcoin">${word}</span><i id="btc-${word}" class="fab fa-btc"></i>`
-        bitcoinStr += `<span link="https://www.blockchain.com/btc/address/3CWmEX6DZGVvPkTMcbSfLrhvMjuqsQzYRN"></span>`
-        const el = `<b-popover :target="btc-${word}" :placement="placement" title="Popover!" triggers="hover focus" :content="Placement"></b-popover>`
-        // bitcoinStr +=
-
-        bitcoinPopovers.push({
-          id: `btc-${word}`,
-          title: 'bitcoin',
-          content: 'cont'
-        })
-        this.htmlPopovers = bitcoinPopovers
-        return bitcoinStr
-      }
-
-      return `${word}`
-    },
     onDragOver(e) {
       console.log('dragover')
     },
@@ -335,10 +282,6 @@ export default {
       console.log(e.dataTransfer.files)
       if(!droppedFiles || !droppedFiles.length) return;
       this.addFileAttachments(e.dataTransfer.files)
-      // this tip, convert FileList to array, credit: https://www.smashingmagazine.com/2018/01/drag-drop-file-uploader-vanilla-js/
-      // ([...droppedFiles]).forEach(f => {
-      //   this.files.push(f);
-      // });
     },
     onClickTTLObject(index) {
       this.selectedTTLIndex = index

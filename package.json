@@ -61,7 +61,8 @@
     "vue-template-compiler": "^2.6.12",
     "wallet-address-validator": "^0.2.4",
     "webpack": "^4.34.0",
-    "webpack-cli": "^3.3.4"
+    "webpack-cli": "^3.3.4",
+    "xss": "^1.0.8"
   },
   "devDependencies": {
     "@types/express": "^4.17.2",

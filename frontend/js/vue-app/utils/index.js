@@ -159,6 +159,21 @@ function validateEmail(email) {
   return emailRegexp.test(String(email).toLowerCase());
 }
 
+function validateUrl(url) {
+  try {
+    const targetUrl = new URL(url);
+    console.log('targetUrl', targetUrl)
+    if (!targetUrl) return false
+    if (targetUrl.protocol !== 'http:' && targetUrl.protocol !== 'https:') {
+      return false
+    }
+  } catch (_) {
+    return false;
+  }
+  
+  return true;
+}
+
 export {
   secrets,
   createNote,
@@ -167,4 +182,5 @@ export {
   getFileDataURL,
   getTTLList,
   validateEmail,
+  validateUrl,
 }

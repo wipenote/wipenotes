@@ -5,21 +5,10 @@
 
         <div class="form__top">
           <div class="textarea__wrapper">
-            <div
-              class="textarea"
-              contenteditable="true"
-              v-html="currentMessage"
-            ></div>
-            <textarea
-              style="display: none;"
+            <CompiledHtml
               v-if="!noteLoading"
-              v-model="currentMessage"
-              class="textarea"
-              id="textarea"
-              name="text"
-              placeholder="Write your note here"
-              readonly
-              autofocus />
+              :text="currentMessage"
+            />
 
             <div v-else>
               <b-spinner variant="primary"></b-spinner>
@@ -169,6 +158,7 @@
   } from '../utils'
   import axios from 'axios'
   import * as WAValidator from "wallet-address-validator";
+  import CompiledHtml from './CompiledHtml.js'
 
   export default {
     name: 'Home',
