@@ -37,20 +37,30 @@
       getCryptoIconWithPopover({address, tokenKey, linkAddressExplorer, popoverLinkText, icon}) {
         const randomNumber = Math.round(Math.random() * 100000)
         let bitcoinStr =
-          `<span class="link_${tokenKey}">${address}</span>`
-        bitcoinStr += `<span :id="'${tokenKey}-${address}-${randomNumber}'" class="crypto-address"><i class="fab ${icon}"></i></span>`
+          `<span class="text-link link_${tokenKey}">${address}</span>`
+        bitcoinStr += `<span @click="onClickLink('${address}')" :id="'${tokenKey}-${address}-${randomNumber}'" class="crypto-address"><i class="fab ${icon}"></i></span>`
         bitcoinStr += `<b-popover :target="'${tokenKey}-${address}-${randomNumber}'" placement="top" triggers="hover">`
         bitcoinStr += `<a class="note-popover-link" href="${linkAddressExplorer}" target="_blank">${popoverLinkText}</a>`
         bitcoinStr += `</b-popover>`
   
         return bitcoinStr
       },
+      onClickLink(text) {
+        // console.log('txt', text)
+        this.$clipboard(text)
+        this.$bvToast.toast('Text has been copied', {
+          // title: `Copied successfully`,
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 3000,
+        })
+      },
       getRecognizedWordHtml(word) {
         if (validateEmail(word)) {
           const randomNumber = Math.round(Math.random() * 100000)
           let mailStr =
-            `<span class="link_mail">${word}</span>`
-          mailStr += `<span :id="'maillink-${randomNumber}'" class="crypto-address"><i class="fas fa-at"></i></span>`
+            `<span class="text-link link_mail">${word}</span>`
+          mailStr += `<span @click="onClickLink('${word}')" :id="'maillink-${randomNumber}'" class="crypto-address"><i class="fas fa-at"></i></span>`
           mailStr += `<b-popover :target="'maillink-${randomNumber}'" placement="top" triggers="hover">`
           mailStr += `<a class="note-popover-link" href="mailto:${word}" target="_blank">send mail to ${word}</a>`
           mailStr += `</b-popover>`

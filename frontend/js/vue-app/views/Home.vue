@@ -30,7 +30,7 @@
               autofocus />
 
             <div class="form__file-list">
-              <input style="display: none" type="file" ref="files" @change="onFileChange"/>
+              <input style="display: none" multiple type="file" ref="files" @change="onFileChange"/>
               <button v-for="file in files" class="form__filename">
                 <span class="form__filename-icon-wrapper">
                   <img class="form__filename-icon" v-if="!file.isImage" src="/assets/images/attachment.svg" alt="attachment">
@@ -234,6 +234,10 @@ export default {
       this.message = this.$route.params.replyMessage
     }
 
+    if (this.$route.params.dropFilesEvent) {
+      this.onDropFile(this.$route.params.dropFilesEvent)
+    }
+
     console.log('ref', this.$refs.htmlField)
 
     if (this.$refs.messageTextarea) {
@@ -286,7 +290,7 @@ export default {
     onClickTTLObject(index) {
       this.selectedTTLIndex = index
     },
-    submitFiles(){
+    submitFiles() {
       let formData = new FormData();
       for( var i = 0; i < this.files.length; i++ ){
         let file = this.files[i];

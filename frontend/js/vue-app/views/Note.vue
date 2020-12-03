@@ -1,6 +1,10 @@
 <template>
   <div class="form">
-    <div class="window">
+    <div
+      class="window"
+      @dragenter.prevent.stop="dragging = true"
+      @dragover.prevent.stop="dragging = true"
+    >
       <div class="form__wrapper-img">
 
         <div class="form__top">
@@ -19,17 +23,18 @@
               <button
                 v-for="file in files"
                 class="form__filename"
-                @click="downloadFile(file)"
+                @click="viewFile(file)"
               >
                 <span class="form__filename-icon-wrapper">
                   <img v-if="!file.isImage"
                        class="form__filename-icon"
                        src="/assets/images/attachment.svg"
-                       alt="attachment"
-                  >
+                       alt="attachment">
                   <img v-else class="form__filename-icon-image" :src="file.imageData" alt="">
                 </span>
-                {{file.file.metadata.name}}
+                <span class="form__filename-title">
+                  {{file.file.metadata.name}}
+                </span>
               </button>
             </div>
 
@@ -47,7 +52,7 @@
           </div>
           <button
             class="button__open-text"
-            @click="onClickShowNote"
+            @click="onClickToggleNote"
           >
             <img src="/assets/images/eye.svg" alt="eye">
           </button>
@@ -58,6 +63,15 @@
       <div v-if="isShowErrorText" class="form__bottom-error">
         {{errorText}}
       </div>
+
+      <div
+        v-if="dragging"
+        class="drag-overlay"
+        @drop.prevent="onDropFile"
+        @dragleave="dragging=false"
+      >
+        Drop files here to upload
+      </div>
     </div>
     <button @click="createNewNote" class="button__submit" type="submit">
       Create a new note
@@ -67,7 +81,13 @@
       class="button__submit button__submit_transparent"
       type="submit"
       :disabled="!isNoteOpened || !(this.noteData && this.noteData.message)">
-      Reply note
+      Reply
+    </button>
+    <button
+      @click="copyNote"
+      class="button__submit button__submit_transparent ml-3"
+      :disabled="!isNoteOpened || !(this.noteData && this.noteData.message)">
+      Copy note
     </button>
 
     <b-modal
@@ -161,7 +181,7 @@
   import CompiledHtml from './CompiledHtml.js'
 
   export default {
-    name: 'Home',
+    name: 'Note',
     props: {},
     data() {
       return {
@@ -183,6 +203,7 @@
         errorText: '',
         isShowErrorText: false,
         isVisibleMobileSettingsModal: false,
+        dragging: false,
       }
     },
     mounted() {
@@ -243,8 +264,13 @@
       onPasswordFieldBlur() {
         this.closeShowPasswordPopover()
       },
-      onClickShowNote() {
-        this.showNote()
+      async onClickToggleNote() {
+        if (this.isNoteOpened) {
+          this.isNoteOpened = false
+        } else {
+          await this.showNote()
+          this.isNoteOpened = true
+        }
       },
       hideConfirmModal() {
         this.isVisibleConfirmModal = false
@@ -330,6 +356,20 @@
         link.download = file.file.metadata.name
         link.click();
       },
+      viewFile(file) {
+        var blob = new Blob([file.file.data], file.file.metadata);
+        var objectUrl = URL.createObjectURL(blob);
+
+        var anchor = document.createElement('a');
+        anchor.href = objectUrl;
+        anchor.target = '_blank';
+        anchor.click();
+        // const link = document.createElement('a');
+        // link.href = window.URL.createObjectURL(blob);
+        // link.href = file.imageData;
+        // link.download = file.file.metadata.name
+        // link.click();
+      },
       async showNote() {
         this.closeShowPasswordPopover()
         this.hidePageError()
@@ -340,7 +380,6 @@
         if (!this.noteData) {
           await this.loadNote()
         }
-        this.isNoteOpened = true
       },
       async onPasswordEnter() {
         await this.showNote()
@@ -376,6 +415,32 @@
           })
 
         }
+      },
+      copyNote() {
+        this.$clipboard(this.currentMessage)
+        this.$bvToast.toast('Note has been copied', {
+          // title: `Copied successfully`,
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 3000,
+        })
+      },
+      onDropFile(e) {
+        this.dragging = false
+        let newMessage = this.noteData.message
+          .split('\n')
+          .map(line => `> ${line}`)
+          .join('\n')
+
+        newMessage += '\n'
+
+        this.$router.push({
+          name: 'home',
+          params: {
+            replyMessage: newMessage,
+            dropFilesEvent: e,
+          }
+        })
       },
     }
   }
