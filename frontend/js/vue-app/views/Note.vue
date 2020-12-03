@@ -50,12 +50,23 @@
               </button>
             </div>
           </div>
-          <button
-            class="button__open-text"
-            @click="onClickToggleNote"
-          >
-            <img src="/assets/images/eye.svg" alt="eye">
-          </button>
+
+          <div class="note-actions">
+            <button
+              class="button__note-action"
+              @click="onClickToggleNote"
+            >
+              <img src="/assets/images/eye.svg" alt="eye">
+            </button>
+
+            <button
+              v-if="isNoteOpened && this.noteData && this.noteData.message"
+              class="button__note-action"
+              @click="copyNote"
+            >
+              <img src="/assets/images/copy.svg" alt="copy">
+            </button>
+          </div>
 
         </div>
       </div>
@@ -82,12 +93,6 @@
       type="submit"
       :disabled="!isNoteOpened || !(this.noteData && this.noteData.message)">
       Reply
-    </button>
-    <button
-      @click="copyNote"
-      class="button__submit button__submit_transparent ml-3"
-      :disabled="!isNoteOpened || !(this.noteData && this.noteData.message)">
-      Copy note
     </button>
 
     <b-modal
