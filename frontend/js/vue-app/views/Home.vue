@@ -7,7 +7,7 @@
     >
       <div class="form__wrapper-img">
         <div class="form__top">
-          <div class="textarea__wrapper">
+          <div class="textarea__wrapper" @paste="pasteTextarea">
             <textarea
               v-if="isNoteVisible"
               v-model="message"
@@ -15,7 +15,9 @@
               class="textarea"
               name="text"
               placeholder="Write your note here"
-              autofocus />
+              autofocus
+              spellcheck="false"
+            />
 
             <textarea
               v-else
@@ -28,14 +30,14 @@
               autofocus />
 
             <div class="form__file-list">
-              <input style="display: none" type="file" ref="files" @change="onFileChange"/>
+              <input style="display: none" multiple type="file" ref="files" @change="onFileChange"/>
               <button v-for="file in files" class="form__filename">
                 <span class="form__filename-icon-wrapper">
                   <img class="form__filename-icon" v-if="!file.isImage" src="/assets/images/attachment.svg" alt="attachment">
                   <img class="form__filename-icon-image" v-else :src="file.imageData" alt="">
                 </span>
                 <span class="form__filename-title">
-                  {{file.file.name}}
+                  {{file.file && file.file.name}}
                 </span>
                 <span class="form__filename-delete" @click="deleteAttachment(file)">x</span>
               </button>
@@ -135,7 +137,6 @@
       <b-spinner v-if="isNoteCreating" small variant="dark"></b-spinner>
     </button>
 
-
     <b-modal
       id="confirm-modal"
       ref="confirmModal"
@@ -197,12 +198,16 @@
     secrets,
     createNote,
     getNote,
-    getNoteStatus, getFileDataURL, getTTLList,
+    getNoteStatus, getFileDataURL, getTTLList, validateEmail,
   } from '../utils'
 import * as generator from 'generate-password'
+import CompiledHtml from './CompiledHtml.js'
 
 export default {
   name: 'Home',
+  components: {
+    CompiledHtml
+  },
   props: {},
   data() {
     return {
@@ -220,12 +225,20 @@ export default {
       attachmentPopoverText: '',
       isVisibleMobileSettingsModal: false,
       dragging: false,
+      currentMessageHtml: '',
+      htmlPopovers: [],
     }
   },
   mounted() {
     if (this.$route.params.replyMessage) {
       this.message = this.$route.params.replyMessage
     }
+
+    if (this.$route.params.dropFilesEvent) {
+      this.onDropFile(this.$route.params.dropFilesEvent)
+    }
+
+    console.log('ref', this.$refs.htmlField)
 
     if (this.$refs.messageTextarea) {
       this.$nextTick(() => {
@@ -254,7 +267,8 @@ export default {
     },
     currentMessage() {
       return this.isNoteVisible ? this.message : new Array(this.message.length).fill('*').join('')
-    }
+    },
+
   },
   watch: {
     selectedPassword(newVal) {
@@ -272,15 +286,11 @@ export default {
       console.log(e.dataTransfer.files)
       if(!droppedFiles || !droppedFiles.length) return;
       this.addFileAttachments(e.dataTransfer.files)
-      // this tip, convert FileList to array, credit: https://www.smashingmagazine.com/2018/01/drag-drop-file-uploader-vanilla-js/
-      // ([...droppedFiles]).forEach(f => {
-      //   this.files.push(f);
-      // });
     },
     onClickTTLObject(index) {
       this.selectedTTLIndex = index
     },
-    submitFiles(){
+    submitFiles() {
       let formData = new FormData();
       for( var i = 0; i < this.files.length; i++ ){
         let file = this.files[i];
@@ -375,6 +385,35 @@ export default {
     },
     closeMobileNoteSettings() {
       this.isVisibleMobileSettingsModal = false
+    },
+    async pasteTextarea(pasteEvent, callback) {
+      // pasteEvent.preventDefault()
+      if (pasteEvent.clipboardData === false){
+        if (typeof(callback) == "function"){
+          callback(undefined);
+        }
+      }
+
+      var items = pasteEvent.clipboardData.items;
+
+      if (items === undefined){
+        if (typeof(callback) == "function"){
+          callback(undefined);
+        }
+      }
+
+      const attachments = []
+
+      for (var i = 0; i < items.length; i++) {
+        var blob = items[i].getAsFile();
+
+        if (blob) {
+          console.log('blob', blob)
+          attachments.push(blob)
+        }
+      }
+
+      this.addFileAttachments(attachments)
     }
   }
 }

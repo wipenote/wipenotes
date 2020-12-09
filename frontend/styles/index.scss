@@ -327,6 +327,11 @@ body {
               align-items: baseline;
               padding-right: 10px;
             }
+
+            a.link {
+              color: #007bff !important;
+              cursor: pointer;
+            }
             
             // &::before {
             //   content: '';
@@ -404,6 +409,19 @@ body {
               display: none;
             }
           }
+
+          .button__note-action {
+            background-color: transparent;
+            border: 0;
+            padding: 0;
+            outline: none;
+            margin-bottom: 15px;
+            @media (max-width: 991px) {
+              display: none;
+            }
+          }
+
+
         }
       }
       &__bottom {
@@ -1013,3 +1031,37 @@ button {
 
 }
 
+.crypto-address {
+  padding: 5px;
+  background: rgba(204, 204, 204, 0.6);
+  border-radius: 5px;
+  margin: 0 5px;
+  cursor: pointer;
+  position: relative;
+
+  .crypto-popover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    max-width: 500px;
+  }
+
+  &:hover .crypto-popover {
+    display: block;
+  }
+}
+
+.note-html-content {
+  font-size: 18px;
+}
+
+.note-html-content a,
+a.note-popover-link {
+  color: #007bff !important;
+}
+
+.note-actions {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,19 +1,18 @@
 <template>
   <div class="form">
-    <div class="window">
+    <div
+      class="window"
+      @dragenter.prevent.stop="dragging = true"
+      @dragover.prevent.stop="dragging = true"
+    >
       <div class="form__wrapper-img">
 
         <div class="form__top">
           <div class="textarea__wrapper">
-            <textarea
+            <CompiledHtml
               v-if="!noteLoading"
-              v-model="currentMessage"
-              class="textarea"
-              id="textarea"
-              name="text"
-              placeholder="Write your note here"
-              readonly
-              autofocus />
+              :text="currentMessage"
+            />
 
             <div v-else>
               <b-spinner variant="primary"></b-spinner>
@@ -24,17 +23,18 @@
               <button
                 v-for="file in files"
                 class="form__filename"
-                @click="downloadFile(file)"
+                @click="viewFile(file)"
               >
                 <span class="form__filename-icon-wrapper">
                   <img v-if="!file.isImage"
                        class="form__filename-icon"
                        src="/assets/images/attachment.svg"
-                       alt="attachment"
-                  >
+                       alt="attachment">
                   <img v-else class="form__filename-icon-image" :src="file.imageData" alt="">
                 </span>
-                {{file.file.metadata.name}}
+                <span class="form__filename-title">
+                  {{file.file.metadata.name}}
+                </span>
               </button>
             </div>
 
@@ -50,68 +50,38 @@
               </button>
             </div>
           </div>
-          <button
-            class="button__open-text"
-            @click="onClickShowNote"
-          >
-            <img src="/assets/images/eye.svg" alt="eye">
-          </button>
 
-        </div>
-      </div>
-      <div class="form__bottom">
-        <div class="form__bottom-left">
-          <button class="button__attachment">
-            <img src="/assets/images/attachment.svg" alt="attachment">
-          </button>
-        </div>
-        <div class="form__bottom-right form__bottom-right_desktop">
-          <div class="ttl-selector ttl-selector_disabled">
-            <div class="ttl-selector-current">
-              <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
-              <span class="ttl-selector-text">
-                {{currentTTLLabel}}
-              </span>
-              <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
-            </div>
-          </div>
-          <form
-            id="field-password-input-wrapper"
-            class="field__password field__password_disabled"
-            @submit.prevent="onPasswordEnter"
-          >
-            <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
-            <input
-              id="field-password-input"
-              class="field__password__input"
-              type="password"
-              v-model="notePassword"
-              placeholder="Enter password"
-              @focus="onPasswordFieldFocus"
-              @blur="onPasswordFieldBlur"
-              :disabled="isNoteOpened"
-            />
-
-            <b-popover
-              :show.sync="isShowPasswordPopover"
-              target="field-password-input-wrapper"
-              placement="topleft"
-              triggers=""
+          <div class="note-actions">
+            <button
+              class="button__note-action"
+              @click="onClickToggleNote"
             >
-              Please, enter password
-            </b-popover>
-          </form>
-        </div>
+              <img src="/assets/images/eye.svg" alt="eye">
+            </button>
 
-        <div class="form__bottom-right form__bottom-right_mobile">
-          <button @click="onClickShowNote" class="button__attachment button__attachment_mobile">
-            <img src="/assets/images/eye.svg" alt="open the password">
-          </button>
+            <button
+              v-if="isNoteOpened && this.noteData && this.noteData.message"
+              class="button__note-action"
+              @click="copyNote"
+            >
+              <img src="/assets/images/copy.svg" alt="copy">
+            </button>
+          </div>
+
         </div>
       </div>
 
       <div v-if="isShowErrorText" class="form__bottom-error">
         {{errorText}}
+      </div>
+
+      <div
+        v-if="dragging"
+        class="drag-overlay"
+        @drop.prevent="onDropFile"
+        @dragleave="dragging=false"
+      >
+        Drop files here to upload
       </div>
     </div>
     <button @click="createNewNote" class="button__submit" type="submit">
@@ -122,7 +92,7 @@
       class="button__submit button__submit_transparent"
       type="submit"
       :disabled="!isNoteOpened || !(this.noteData && this.noteData.message)">
-      Reply note
+      Reply
     </button>
 
     <b-modal
@@ -209,12 +179,14 @@
     secrets,
     createNote,
     getNote,
-    getNoteStatus, getTTLList,
+    getNoteStatus, getTTLList, validateEmail,
   } from '../utils'
   import axios from 'axios'
+  import * as WAValidator from "wallet-address-validator";
+  import CompiledHtml from './CompiledHtml.js'
 
   export default {
-    name: 'Home',
+    name: 'Note',
     props: {},
     data() {
       return {
@@ -236,6 +208,7 @@
         errorText: '',
         isShowErrorText: false,
         isVisibleMobileSettingsModal: false,
+        dragging: false,
       }
     },
     mounted() {
@@ -279,14 +252,30 @@
       }
     },
     methods: {
+      getRecognizedWordHtml(word) {
+        if (validateEmail(word)) {
+          return `<a class="link" href="mailto:${word}">${word}</a>`
+        }
+
+        if (WAValidator.validate(word, 'BTC')) {
+          return `<a class="link_bitcoin" href="bitcoin:${word}">${word}</a>`
+        }
+
+        return `<span>${word}</span>`
+      },
       onPasswordFieldFocus() {
         this.closeShowPasswordPopover()
       },
       onPasswordFieldBlur() {
         this.closeShowPasswordPopover()
       },
-      onClickShowNote() {
-        this.showNote()
+      async onClickToggleNote() {
+        if (this.isNoteOpened) {
+          this.isNoteOpened = false
+        } else {
+          await this.showNote()
+          this.isNoteOpened = true
+        }
       },
       hideConfirmModal() {
         this.isVisibleConfirmModal = false
@@ -372,6 +361,20 @@
         link.download = file.file.metadata.name
         link.click();
       },
+      viewFile(file) {
+        var blob = new Blob([file.file.data], file.file.metadata);
+        var objectUrl = URL.createObjectURL(blob);
+
+        var anchor = document.createElement('a');
+        anchor.href = objectUrl;
+        anchor.target = '_blank';
+        anchor.click();
+        // const link = document.createElement('a');
+        // link.href = window.URL.createObjectURL(blob);
+        // link.href = file.imageData;
+        // link.download = file.file.metadata.name
+        // link.click();
+      },
       async showNote() {
         this.closeShowPasswordPopover()
         this.hidePageError()
@@ -382,7 +385,6 @@
         if (!this.noteData) {
           await this.loadNote()
         }
-        this.isNoteOpened = true
       },
       async onPasswordEnter() {
         await this.showNote()
@@ -418,7 +420,33 @@
           })
 
         }
-      }
+      },
+      copyNote() {
+        this.$clipboard(this.currentMessage)
+        this.$bvToast.toast('Note has been copied', {
+          // title: `Copied successfully`,
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 3000,
+        })
+      },
+      onDropFile(e) {
+        this.dragging = false
+        let newMessage = this.noteData.message
+          .split('\n')
+          .map(line => `> ${line}`)
+          .join('\n')
+
+        newMessage += '\n'
+
+        this.$router.push({
+          name: 'home',
+          params: {
+            replyMessage: newMessage,
+            dropFilesEvent: e,
+          }
+        })
+      },
     }
   }
 </script>

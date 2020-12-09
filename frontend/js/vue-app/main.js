@@ -5,6 +5,7 @@ import Clipboard from 'v-clipboard'
 
 import App from './App.vue'
 import router from './router'
+import '@fortawesome/fontawesome-free/js/all.js'
 
 Vue.use(Plugin)
 Vue.use(BootstrapVue)

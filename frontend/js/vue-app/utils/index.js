@@ -154,6 +154,26 @@ function getTTLList() {
   ]
 }
 
+const emailRegexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+function validateEmail(email) {
+  return emailRegexp.test(String(email).toLowerCase());
+}
+
+function validateUrl(url) {
+  try {
+    const targetUrl = new URL(url);
+    console.log('targetUrl', targetUrl)
+    if (!targetUrl) return false
+    if (targetUrl.protocol !== 'http:' && targetUrl.protocol !== 'https:') {
+      return false
+    }
+  } catch (_) {
+    return false;
+  }
+  
+  return true;
+}
+
 export {
   secrets,
   createNote,
@@ -161,4 +181,6 @@ export {
   getNoteStatus,
   getFileDataURL,
   getTTLList,
+  validateEmail,
+  validateUrl,
 }
