@@ -410,18 +410,6 @@ body {
             }
           }
 
-          .button__note-action {
-            background-color: transparent;
-            border: 0;
-            padding: 0;
-            outline: none;
-            margin-bottom: 15px;
-            @media (max-width: 991px) {
-              display: none;
-            }
-          }
-
-
         }
       }
       &__bottom {
@@ -1064,4 +1052,28 @@ a.note-popover-link {
 .note-actions {
   display: flex;
   flex-direction: column;
+
+  &_right-bar {
+    @media (max-width: 991px) {
+      display: none;
+    }
+  }
+
+  &_bottom-bar {
+    margin-left: auto;
+
+    .button__note-action {
+      margin-left: 15px;
+      margin-bottom: 0;
+    }
+
+  }
+}
+
+.button__note-action {
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  outline: none;
+  margin-bottom: 15px;
 }

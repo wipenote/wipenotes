@@ -51,7 +51,7 @@
             </div>
           </div>
 
-          <div class="note-actions">
+          <div class="note-actions note-actions_right-bar">
             <button
               class="button__note-action"
               @click="onClickToggleNote"
@@ -66,7 +66,43 @@
             >
               <img src="/assets/images/copy.svg" alt="copy">
             </button>
+
+            <button
+              v-if="isNoteOpened && shareCapability && files.length"
+              class="button__note-action"
+              @click="shareNote"
+            >
+              <img src="/assets/images/share.svg" alt="share">
+            </button>
           </div>
+
+        </div>
+      </div>
+
+      <div class="form__bottom">
+        <div class="form__bottom-right form__bottom-right_mobile note-actions_bottom-bar">
+          <button
+            class="button__note-action"
+            @click="onClickToggleNote"
+          >
+            <img src="/assets/images/eye.svg" alt="eye">
+          </button>
+
+          <button
+            v-if="isNoteOpened && this.noteData && this.noteData.message"
+            class="button__note-action"
+            @click="copyNote"
+          >
+            <img src="/assets/images/copy.svg" alt="copy">
+          </button>
+
+          <button
+            v-if="isNoteOpened && shareCapability && files.length"
+            class="button__note-action"
+            @click="shareNote"
+          >
+            <img src="/assets/images/share.svg" alt="share">
+          </button>
 
         </div>
       </div>
@@ -209,6 +245,7 @@
         isShowErrorText: false,
         isVisibleMobileSettingsModal: false,
         dragging: false,
+        shareCapability: navigator && navigator.canShare && navigator.canShare() || false,
       }
     },
     mounted() {
@@ -249,7 +286,7 @@
       },
       files() {
         return this.noteData && this.noteData.files || []
-      }
+      },
     },
     methods: {
       getRecognizedWordHtml(word) {
@@ -447,6 +484,13 @@
           }
         })
       },
+      shareNote() {
+        navigator.share({
+          files: this.noteData.files.map(file => file.file.data),
+          title: `Note ${this.noteId}| Wipenote`,
+          text: this.currentMessage,
+        })
+      }
     }
   }
 </script>
