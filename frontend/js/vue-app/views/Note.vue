@@ -245,7 +245,7 @@
         isShowErrorText: false,
         isVisibleMobileSettingsModal: false,
         dragging: false,
-        shareCapability: navigator && navigator.canShare && navigator.canShare() || false,
+        shareCapability: navigator && !!navigator.canShare || false,
       }
     },
     mounted() {
