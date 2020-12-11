@@ -486,10 +486,13 @@
       },
       shareNote() {
         try {
+          const filesList = this.noteData.files.map(({file}) => {
+            return new File([file.data], file.metadata.name, {type: file.metadata.type});
+          })
+
+          console.log('filesList', filesList)
           navigator.share({
-            files: this.noteData.files.map(({file}) => {
-              return new File([file.data], file.metadata.name, {type: file.metadata.type});
-            }),
+            files: filesList,
             title: `Note ${this.noteId}| Wipenote`,
             text: this.currentMessage || '',
           })
