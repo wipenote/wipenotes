@@ -485,11 +485,18 @@
         })
       },
       shareNote() {
-        navigator.share({
-          files: this.noteData.files.map(file => file.file.data),
-          title: `Note ${this.noteId}| Wipenote`,
-          text: this.currentMessage,
-        })
+        console.log('files', this.noteData.files.map(file => file.file.data))
+        console.log('text', this.currentMessage)
+        try {
+          navigator.share({
+            files: this.noteData.files.map(file => file.file.data),
+            title: `Note ${this.noteId}| Wipenote`,
+            text: this.currentMessage,
+          })
+          console.log('share files success')
+        } catch (e) {
+          console.error('share files error', e)
+        }
       }
     }
   }
