@@ -494,7 +494,7 @@
           const shareData = {
             files: filesList,
             title: `Note ${this.noteId}| Wipenote`,
-            text: this.currentMessage || '',
+            text: `${this.currentMessage}${textCopyright}`,
             url: window.location.origin,
           }
 
