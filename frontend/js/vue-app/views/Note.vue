@@ -497,7 +497,8 @@
             url: window.location.origin,
           }
 
-          console.log('filesList', filesList)
+          console.log('shareData', shareData)
+
           if (navigator.canShare && navigator.canShare(shareData)) {
             navigator.share(shareData)
           }
