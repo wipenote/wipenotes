@@ -490,13 +490,17 @@
             return new File([file.data], file.metadata.name, {type: file.metadata.type});
           })
 
-          console.log('filesList', filesList)
-          navigator.share({
+          const shareData = {
             files: filesList,
             title: `Note ${this.noteId}| Wipenote`,
             text: this.currentMessage || '',
             url: window.location.origin,
-          })
+          }
+
+          console.log('filesList', filesList)
+          if (navigator.canShare && navigator.canShare(shareData)) {
+            navigator.share(shareData)
+          }
           console.log('share files success')
         } catch (e) {
           console.error('share files error', e)
