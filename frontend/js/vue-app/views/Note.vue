@@ -495,6 +495,7 @@
             files: filesList,
             title: `Note ${this.noteId}| Wipenote`,
             text: this.currentMessage || '',
+            url: window.location.origin,
           })
           console.log('share files success')
         } catch (e) {
