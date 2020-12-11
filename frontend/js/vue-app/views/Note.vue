@@ -68,7 +68,7 @@
             </button>
 
             <button
-              v-if="isNoteOpened && shareCapability && files.length"
+              v-if="isNoteOpened && shareCapability"
               class="button__note-action"
               @click="shareNote"
             >
@@ -97,7 +97,7 @@
           </button>
 
           <button
-            v-if="isNoteOpened && shareCapability && files.length"
+            v-if="isNoteOpened && shareCapability"
             class="button__note-action"
             @click="shareNote"
           >
