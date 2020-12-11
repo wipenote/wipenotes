@@ -23,7 +23,6 @@
     watch: {
       text(txt) {
         const clearedXSS = xss(txt)
-        console.log('xss', clearedXSS)
         this.html = this.replaceHtmlText(clearedXSS)
         this.$nextTick(() => {
           this.updateRender();
