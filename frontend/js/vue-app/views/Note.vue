@@ -487,7 +487,7 @@
       shareNote() {
         try {
           const filesList = this.noteData.files.map(({file}) => {
-            return new File(file.data, file.metadata.name, {type: file.metadata.type});
+            return new File([file.data], file.metadata.name, {type: file.metadata.type});
           })
 
           console.log('filesList', filesList)
