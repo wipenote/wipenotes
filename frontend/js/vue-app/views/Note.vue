@@ -490,6 +490,7 @@
             return new File([file.data], file.metadata.name, {type: file.metadata.type});
           })
 
+          const textCopyright = `\r\n\r\n${window.location.origin}`
           const shareData = {
             files: filesList,
             title: `Note ${this.noteId}| Wipenote`,
