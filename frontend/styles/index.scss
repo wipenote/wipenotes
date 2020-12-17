@@ -73,8 +73,8 @@ body {
     }
     .container-ham {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      //width: 100%;
+      //height: 100%;
       text-align: center;
       top: 40%;
       left: 0;
@@ -86,7 +86,7 @@ body {
         top: 0;
         left: 0;
         width: 100%;
-        height: 0%;
+        height: 0;
         opacity: 0;
         visibility: hidden;
         transition: opacity .35s, visibility .35s, height .35s;
@@ -409,18 +409,6 @@ body {
               display: none;
             }
           }
-
-          .button__note-action {
-            background-color: transparent;
-            border: 0;
-            padding: 0;
-            outline: none;
-            margin-bottom: 15px;
-            @media (max-width: 991px) {
-              display: none;
-            }
-          }
-
 
         }
       }
@@ -1064,4 +1052,28 @@ a.note-popover-link {
 .note-actions {
   display: flex;
   flex-direction: column;
+
+  &_right-bar {
+    @media (max-width: 991px) {
+      display: none;
+    }
+  }
+
+  &_bottom-bar {
+    margin-left: auto;
+
+    .button__note-action {
+      margin-left: 15px;
+      margin-bottom: 0;
+    }
+
+  }
+}
+
+.button__note-action {
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  outline: none;
+  margin-bottom: 15px;
 }

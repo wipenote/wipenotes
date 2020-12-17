@@ -1,56 +1,5 @@
 {% extends "../layouts/default.njk" %}
 
 {% block content %}
-  <div class="form">
-    <div class="window">
-      <div class="form__wrapper-img">
-
-        <div class="form__top">
-          <div class="textarea__wrapper">
-            <textarea
-                class="textarea"
-                name="text"
-                placeholder="Write your note here"
-                autofocus></textarea>
-
-            <div>
-              <input style="display: none" type="file"/>
-            </div>
-          </div>
-          <button class="button__open-text">
-            <img src="/assets/images/eye.svg" alt="eye">
-          </button>
-
-        </div>
-      </div>
-      <div class="form__bottom">
-        <div class="form__bottom-left">
-          <button class="button__attachment">
-            <img src="/assets/images/attachment.svg" alt="attachment">
-          </button>
-        </div>
-        <div class="form__bottom-right">
-          <div class="ttl-selector">
-            <div class="ttl-selector-current">
-              <span class="ttl-selector-icon"><img src="/assets/images/timer.svg" alt="attachment"></span>
-              <span class="ttl-selector-text">
-                Delete immediately
-              </span>
-              <span><img class="" src="/assets/images/arrow.svg" alt="arrow"></span>
-            </div>
-          </div>
-          <div class="field__password">
-            <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
-            <input
-                class="field__password__input"
-                type="text"
-                placeholder="Enter password"
-            />
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <button class="button__submit" type="submit">Create note</button>
-  </div>
+  <span aria-hidden="true" class="spinner-border spinner-border-sm text-dark"></span>
 {% endblock %}
