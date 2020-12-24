@@ -1043,6 +1043,8 @@ button {
 
 .note-html-content {
   font-size: 18px;
+  max-width: 100%;
+  word-break: break-all;
 }
 
 .note-html-content a,
