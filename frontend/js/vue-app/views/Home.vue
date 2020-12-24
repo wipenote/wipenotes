@@ -41,6 +41,7 @@
                 </span>
                 <span class="form__filename-delete" @click="deleteAttachment(file)">x</span>
               </button>
+              <canvas ref="imgCanvas" style="display: none;"></canvas>
             </div>
           </div>
           <button @click="toggleNoteVisibility" class="button__open-text">
@@ -320,18 +321,80 @@ export default {
           return
         }
 
+        // const dataUrl = await getFileDataURL(file)
+        // const dump = piexifjs.load(dataUrl)
+        // piexifjs.remove(file)
         this.postFormData.append('images[]', file);
         const isImage = file.type.startsWith('image/')
 
+        let targetFile = file
+
+        if (isImage) {
+          const blob = await this.removeExif(file)
+          targetFile = new File([blob], file.name, {
+            name: file.name,
+            lastModified: file.lastModified,
+            size: file.size,
+            type: file.type,
+          })
+        }
         // Max filesize = 5mb
         this.files.push({
-          file,
+          file: targetFile,
           isImage: isImage,
           imageData: isImage ? await getFileDataURL(file): ''
         })
 
       }
       console.log('this.postFormData', this.postFormData)
+    },
+    async removeExif(file) {
+      return URL && URL.createObjectURL ? this.loadImage(URL.createObjectURL(file)) : this.loadImageReader(file)
+    },
+
+    loadImageReader(file) {
+      var reader = new FileReader();
+      reader.readAsDataURL( file );
+
+      return new Promise(resolve => {
+        reader.onload = async function ( ev ) {
+          const blob = await this.loadImage(ev.target.result,file.name);
+          resolve(blob)
+        };
+      })
+    },
+
+    loadImage(file) {
+      var img = new Image();
+      img.src = file;
+      const self = this
+
+      console.log('loadImage', file)
+      return new Promise(async resolve => {
+        img.onload = async function() {
+          const blob = await self.imageToBlob(this, img.naturalWidth, img.naturalHeight);
+          resolve(blob)
+        };
+      })
+    },
+    imageToBlob(img, w, h) {
+      var c = this.$refs.imgCanvas
+      var cx = c.getContext('2d');
+
+      c.width = w;
+      c.height = h;
+      cx.drawImage(img, 0, 0, w, h);
+      // const imgData = c.toDataURL('image/jpeg')
+      // console.log('img', imgData)
+
+      return new Promise(resolve => {
+        c.toBlob(function(blob) {
+          // var newImg = document.createElement('img'),
+          // const bloburl = URL.createObjectURL(blob);
+          // console.log('blob', blob)
+          resolve(blob)
+        })
+      })
     },
     onClickAddAttachment() {
       this.$refs.files.value = ''

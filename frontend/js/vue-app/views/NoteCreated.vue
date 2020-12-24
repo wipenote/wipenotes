@@ -13,6 +13,10 @@
             {{linkUrl}}
           </router-link>
 
+          <div v-if="notePwd" style="padding-left: 45px">
+            password: {{notePwd}}
+          </div>
+
         </div>
         <qrcode-vue
           v-if="linkUrl"
@@ -84,7 +88,7 @@
     },
     computed: {
       relativeLinkUrl() {
-        return this.noteId ? `/${this.noteId}${this.notePwd ? '#' + this.notePwd : ''}` : ''
+        return this.noteId ? `/${this.noteId}` : ''
       },
       linkUrl() {
         return `${window.location.origin}${this.relativeLinkUrl}`

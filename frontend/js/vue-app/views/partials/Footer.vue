@@ -12,7 +12,7 @@
           <span class="footer__copy-icon">
             <img src="../../assets/images/copy.svg" alt="copy">
           </span>
-            1BQ9qza7fn9snSCyJQB3Z<br>cN46biBtkt4ee
+            13RLwNNroNqzayQM7gJ6F<br/>6b3zskd8mvdUU
           </button>
         </div>
         <div class="footer__col footer__col_last col-md-3">

@@ -431,6 +431,7 @@ body {
         &-right {
           display: flex;
           flex-wrap: wrap;
+          margin-left: auto;
           &_desktop {
             @media (max-width: 991px) {
               display: none;

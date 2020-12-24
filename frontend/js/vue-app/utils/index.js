@@ -26,14 +26,14 @@ const createNote = async ({
   files,
   burnDate,
   }) => {
-  console.log('msg', message, 'pwd', password, 'files', files, 'burnD', burnDate)
+  // console.log('msg', message, 'pwd', password, 'files', files, 'burnD', burnDate)
   const key = await secrets.createKeyFromPassword(password)
-  console.log('encryptScheme', secrets.getEncryptionScheme())
-  console.log('key', key)
-  console.log('encrypt msg', message ? await secrets.encryptMessage(message, key) : null)
-  console.log('encrypt files', await Promise.all(
-    files.map(file => secrets.encryptFile(file, key))
-  ))
+  // console.log('encryptScheme', secrets.getEncryptionScheme())
+  // console.log('key', key)
+  // console.log('encrypt msg', message ? await secrets.encryptMessage(message, key) : null)
+  // console.log('encrypt files', await Promise.all(
+  //   files.map(file => secrets.encryptFile(file, key))
+  // ))
   const note = {
     encryptedMessage: message ? await secrets.encryptMessage(message, key) : null,
     messageLength: message.length,

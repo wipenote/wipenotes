@@ -23,7 +23,7 @@
                   <h3 class="footer__title">Donate (btc)</h3>
                   <button class="footer__copy" @click="copyLink">
                     <span class="footer__copy-icon"><img src="/images/copy.svg" alt="copy"></span>
-                    1BQ9qza7fn9snSCyJQB3Z<br>cN46biBtkt4ee
+                    13RLwNNroNqzayQM7gJ6F<br/>6b3zskd8mvdUU
                   </button>
                 </div>
                 <div class="footer__col">
@@ -59,7 +59,7 @@
     },
     data() {
       return {
-        bitcoinAddress: '1BQ9qza7fn9snSCyJQB3ZcN46biBtkt4ee'
+        bitcoinAddress: '13RLwNNroNqzayQM7gJ6F6b3zskd8mvdUU'
       }
     },
     methods: {

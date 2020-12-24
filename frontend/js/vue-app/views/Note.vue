@@ -80,12 +80,47 @@
       </div>
 
       <div class="form__bottom">
+
+        <div class="form__bottom-right form__bottom-right_desktop">
+          <form
+            id="field-password-input-wrapper"
+            class="field__password field__password_disabled"
+            @submit.prevent="onPasswordEnter"
+          >
+            <span class="field__password-icon"><img src="/assets/images/lock.svg" alt="lock"></span>
+            <input
+              id="field-password-input"
+              class="field__password__input"
+              type="password"
+              v-model="notePassword"
+              placeholder="Enter password"
+              @focus="onPasswordFieldFocus"
+              @blur="onPasswordFieldBlur"
+              :disabled="isNoteOpened"
+            />
+
+            <b-popover
+              :show.sync="isShowPasswordPopover"
+              target="field-password-input-wrapper"
+              placement="topleft"
+              triggers=""
+            >
+              Please, enter password
+            </b-popover>
+          </form>
+        </div>
+
         <div class="form__bottom-right form__bottom-right_mobile note-actions_bottom-bar">
+
           <button
-            class="button__note-action"
+            class="button__note-action button__attachment"
             @click="onClickToggleNote"
           >
             <img src="/assets/images/eye.svg" alt="eye">
+          </button>
+
+          <button @click="openMobileNoteSettings" class="button__attachment button__attachment_mobile">
+            <img src="/assets/images/settings.svg" alt="settings">
           </button>
 
           <button
@@ -207,6 +242,37 @@
       </div>
 
     </b-modal>
+
+    <b-modal
+      id="mobile-menu-modal"
+      ref="mobileMenuModal"
+      hide-footer
+      hide-header
+      centered
+      :visible="isVisibleMobileSettingsModal"
+      body-class="note-confirm-modal__body"
+      dialog-class="note-confirm-modal__dialog"
+      modal-class="note-confirm-modal modal-settings"
+    >
+
+      <div class="modal__wrapper">
+        <h2 class="modal__wrapper-title">Note settings</h2>
+        <b-button class="modal__close" @click="closeMobileNoteSettings">
+          <img src="/assets/images/cross.svg" alt="close">
+        </b-button>
+      </div>
+
+      <div class="field__password">
+        <span class="field__password-icon"><img src="/assets/images/lock-purple.svg" alt="lock"></span>
+        <input
+          class="field__password__input"
+          type="text"
+          v-model="notePassword"
+          placeholder="Enter password"
+        />
+      </div>
+    </b-modal>
+
   </div>
 </template>
 
@@ -219,7 +285,6 @@
   } from '../utils'
   import axios from 'axios'
   import * as WAValidator from "wallet-address-validator";
-  import CompiledHtml from './CompiledHtml.js'
 
   export default {
     name: 'Note',
@@ -338,16 +403,21 @@
 
       },
       async loadNote() {
+        let hash
+
+        if (this.noteHash) {
+          hash = this.noteHash
+        } else {
+          hash = this.notePassword
+        }
+
+        if (!hash) {
+          this.showPasswordPopover()
+          throw new Error('Password was not specified')
+        }
         this.noteLoading = true
 
         try {
-          let hash
-
-          if (this.noteHash) {
-            hash = this.noteHash
-          } else {
-            hash = this.notePassword
-          }
           console.log('urlencodedKey', hash)
           if (!this.noteDataEncrypted) {
             const response = await axios.get(`/api/note/${this.noteId}`)
