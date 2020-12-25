@@ -54,9 +54,6 @@
 
       </div>
 
-
-
-
       <div class="form__socials-wrapper">
         <a class="button__socials" :href="fbLink" target="_blank">
           <img src="/assets/images/facebook.svg" alt="facebook">
