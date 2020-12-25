@@ -46,10 +46,10 @@
         </div>
 
         <qrcode-vue
-            v-if="linkUrl"
-            :value="linkUrl"
-            :size="200"
-            level="H"
+          v-if="linkUrl"
+          :value="linkUrl"
+          :size="200"
+          level="H"
         />
 
       </div>
