@@ -497,6 +497,12 @@ body {
     // page qr-code
     .window__wrapper {
       padding: 10px 40px;
+      &_note-created {
+        @media (min-width: 992px) {
+          display: flex;
+          justify-content: space-between;
+        }
+      }
       .link-to-message {
         font-size: 18px;
         line-height: 22px;
@@ -508,16 +514,37 @@ body {
         width: fit-content;
         max-width: 100%;
         padding: 0;
-        margin-bottom: 42px;
+        margin-bottom: 20px;
         word-break: break-all;
+        display: flex;
 
         &__copy {
           cursor: pointer;
 
           img {
             width: 24px;
+            min-width: 24px;
             margin-right: 18px;
-            margin-bottom: 10px;
+            margin-bottom: -10px;
+          }
+        }
+        &__wrapper {
+          @media (max-width: 767px) {
+            max-width: 86%;
+          }
+          .link-to-message__type {
+            font-size: 10px;
+            line-height: 12px;
+            color: #e2dddd;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+          }
+          .link-to-message__password, .link-to-message__router {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: block;
+            word-break: keep-all;
           }
         }
       }

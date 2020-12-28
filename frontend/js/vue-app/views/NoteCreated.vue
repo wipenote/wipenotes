@@ -1,41 +1,50 @@
 <template>
   <fragment>
     <div class="window">
-      <div class="window__wrapper">
-        <div class="link-to-message">
+      <div class="window__wrapper window__wrapper_note-created">
+        <div>
+          <div class="link-to-message">
           <span
-            class="link-to-message__copy"
-            @click="copyLink"
+              class="link-to-message__copy"
+              @click="copyLinkPlusPassword"
           >
             <img src="/assets/images/copy.svg" alt="copy">
           </span>
-          <router-link :to="{ path: linkUrlWithPwd }" target="_blank">
-            {{linkUrlWithPwd}}
-          </router-link>
-          <br/>
+            <div class="link-to-message__wrapper">
+              <p class="link-to-message__type">Link + Pass:</p>
+              <router-link class="link-to-message__router" :to="{ path: relativeLinkUrlPlusPassword }" target="_blank">
+                {{linkUrlPlusPassword}}
+              </router-link>
+            </div>
+          </div>
+          <div class="link-to-message">
           <span
-            class="link-to-message__copy"
-            @click="copyLinkWithoutPassword"
+              class="link-to-message__copy"
+              @click="copyLink"
           >
             <img src="/assets/images/copy.svg" alt="copy">
           </span>
-
-          <router-link :to="{ path: relativeLinkUrl }" target="_blank">
-            {{linkUrl}}
-          </router-link>
-
-          <br/>
+            <div class="link-to-message__wrapper">
+              <p class="link-to-message__type">Link:</p>
+              <router-link class="link-to-message__router" :to="{ path: relativeLinkUrl }" target="_blank">
+                {{linkUrl}}
+              </router-link>
+            </div>
+          </div>
+          <div class="link-to-message" v-if="notePwd">
           <span
-            class="link-to-message__copy"
-            @click="copyPassword"
+              class="link-to-message__copy"
+              @click="copyPassword"
           >
             <img src="/assets/images/copy.svg" alt="copy">
           </span>
-          <span v-if="notePwd">
-            password: {{notePwd}}
-          </span>
-
+            <div class="link-to-message__wrapper">
+              <p class="link-to-message__type">Pass:</p>
+              <p  class="link-to-message__password">{{notePwd}}</p>
+            </div>
+          </div>
         </div>
+
         <qrcode-vue
           v-if="linkUrl"
           :value="linkUrl"
@@ -105,17 +114,17 @@
       this.$clipboard(this.getLinkUrl())
     },
     computed: {
-      relativeLinkUrlWithPwd() {
-        return this.noteId ? `/${this.noteId}${this.notePwd ? '#' + this.notePwd : ''}` : ''
-      },
       relativeLinkUrl() {
         return this.noteId ? `/${this.noteId}` : ''
+      },
+      relativeLinkUrlPlusPassword() {
+        return this.noteId ? `/${this.noteId}#${this.notePwd}` : ''
       },
       linkUrl() {
         return `${window.location.origin}${this.relativeLinkUrl}`
       },
-      linkUrlWithPwd() {
-        return `${window.location.origin}${this.relativeLinkUrlWithPwd}`
+      linkUrlPlusPassword() {
+        return `${window.location.origin}${this.relativeLinkUrl}#${this.notePwd}`
       },
       encodedUrlLink() {
         return encodeURIComponent(this.linkUrl)
@@ -164,7 +173,7 @@
         this.$router.push({name: 'home'})
       },
       copyLink() {
-        this.$clipboard(this.linkUrlWithPwd)
+        this.$clipboard(this.linkUrl)
         this.$bvToast.toast('Link has been copied', {
           // title: `Copied successfully`,
           variant: 'success',
@@ -175,23 +184,29 @@
         // this.$bvToast.show('my-toast')
 
       },
-      copyLinkWithoutPassword() {
-        this.$clipboard(this.linkUrl)
+      copyLinkPlusPassword() {
+        this.$clipboard(this.linkUrlPlusPassword)
         this.$bvToast.toast('Link has been copied', {
           // title: `Copied successfully`,
           variant: 'success',
           solid: true,
           autoHideDelay: 3000,
         })
+
+        // this.$bvToast.show('my-toast')
+
       },
       copyPassword() {
         this.$clipboard(this.notePwd)
-        this.$bvToast.toast('Link has been copied', {
+        this.$bvToast.toast('Password has been copied', {
           // title: `Copied successfully`,
           variant: 'success',
           solid: true,
           autoHideDelay: 3000,
         })
+
+        // this.$bvToast.show('my-toast')
+
       },
       shareFacebook() {
         const shareLink = encodeURIComponent(this.linkUrl)
