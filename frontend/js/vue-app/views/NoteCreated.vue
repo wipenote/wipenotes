@@ -9,7 +9,12 @@
           >
             <img src="/assets/images/copy.svg" alt="copy">
           </span>
-          <router-link :to="{ path: relativeLinkUrl }" target="_blank">
+          <router-link :to="{ path: linkUrlWithPwd }" target="_blank">
+            {{linkUrlWithPwd}}
+          </router-link>
+          <br/>
+
+          <router-link style="padding-left: 45px" :to="{ path: relativeLinkUrl }" target="_blank">
             {{linkUrl}}
           </router-link>
 
@@ -87,11 +92,17 @@
       this.$clipboard(this.getLinkUrl())
     },
     computed: {
+      relativeLinkUrlWithPwd() {
+        return this.noteId ? `/${this.noteId}${this.notePwd ? '#' + this.notePwd : ''}` : ''
+      },
       relativeLinkUrl() {
         return this.noteId ? `/${this.noteId}` : ''
       },
       linkUrl() {
         return `${window.location.origin}${this.relativeLinkUrl}`
+      },
+      linkUrlWithPwd() {
+        return `${window.location.origin}${this.relativeLinkUrlWithPwd}`
       },
       encodedUrlLink() {
         return encodeURIComponent(this.linkUrl)
