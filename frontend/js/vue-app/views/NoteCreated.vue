@@ -13,14 +13,27 @@
             {{linkUrlWithPwd}}
           </router-link>
           <br/>
+          <span
+            class="link-to-message__copy"
+            @click="copyLinkWithoutPassword"
+          >
+            <img src="/assets/images/copy.svg" alt="copy">
+          </span>
 
-          <router-link style="padding-left: 45px" :to="{ path: relativeLinkUrl }" target="_blank">
+          <router-link :to="{ path: relativeLinkUrl }" target="_blank">
             {{linkUrl}}
           </router-link>
 
-          <div v-if="notePwd" style="padding-left: 45px">
+          <br/>
+          <span
+            class="link-to-message__copy"
+            @click="copyPassword"
+          >
+            <img src="/assets/images/copy.svg" alt="copy">
+          </span>
+          <span v-if="notePwd">
             password: {{notePwd}}
-          </div>
+          </span>
 
         </div>
         <qrcode-vue
@@ -151,7 +164,7 @@
         this.$router.push({name: 'home'})
       },
       copyLink() {
-        this.$clipboard(this.linkUrl)
+        this.$clipboard(this.linkUrlWithPwd)
         this.$bvToast.toast('Link has been copied', {
           // title: `Copied successfully`,
           variant: 'success',
@@ -161,6 +174,24 @@
 
         // this.$bvToast.show('my-toast')
 
+      },
+      copyLinkWithoutPassword() {
+        this.$clipboard(this.linkUrl)
+        this.$bvToast.toast('Link has been copied', {
+          // title: `Copied successfully`,
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 3000,
+        })
+      },
+      copyPassword() {
+        this.$clipboard(this.notePwd)
+        this.$bvToast.toast('Link has been copied', {
+          // title: `Copied successfully`,
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 3000,
+        })
       },
       shareFacebook() {
         const shareLink = encodeURIComponent(this.linkUrl)
