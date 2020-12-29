@@ -285,10 +285,13 @@
   } from '../utils'
   import axios from 'axios'
   import * as WAValidator from "wallet-address-validator";
+  import CompiledHtml from "./CompiledHtml";
 
   export default {
     name: 'Note',
-    props: {},
+    props: {
+      CompiledHtml
+    },
     data() {
       return {
         message: '',
