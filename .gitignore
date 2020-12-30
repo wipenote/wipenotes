@@ -14,3 +14,4 @@ yarn-error.log*
 .idea
 .env
 server/public/bundles
+googleStorageKeyFile.json
